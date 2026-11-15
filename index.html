@@ -626,7 +626,9 @@ function render(){
  if(isAdmin())P.push(['admin','⚙️ Admin']);
  const f={inicio:pInicio,robos:pRobos,blanqueo:pBlanqueo,mercado:pMercado,misiones:pMisiones,foro:pForo,mensajes:pMensajes,progreso:pProgreso,perfil:pPerfil,admin:pAdmin};
  if(page==='admin'&&!isAdmin())page='inicio';
- $('#app').innerHTML=`<header><div class="logo">MADRID <b>UNDERGROUND</b></div><nav>${P.map(p=>`<button class="${page===p[0]?'on':''}" onclick="go('${p[0]}')">${p[1]}</button>`).join('')}</const mg=$('#msgs');if(mg)mg.scrollTop=mg.scrollHeight;
+ $('#app').innerHTML=`<header><div class="logo">MADRID <b>UNDERGROUND</b></div><nav>${P.map(p=>`<button class="${page===p[0]?'on':''}" onclick="go('${p[0]}')">${p[1]}</button>`).join('')}</nav>
+ <div class="user"><span class="ok">● en línea</span>${esc(me.username)} ${mbadge(me.mafiaId)}<button class="btn s g" onclick="logout()">Salir</button></div></header><main>${f[page]()}</main>`;
+ const mg=$('#msgs');if(mg)mg.scrollTop=mg.scrollHeight;
 }
 
 /* ---------- Arranque ---------- */
@@ -661,6 +663,8 @@ function boot(){
 }
 boot();
 </script>
+</body>
+</html>
 </body>
 </html>nav>
  <div class="user"><span class="ok">● en línea</span>${esc(me.username)} ${mbadge(me.mafiaId)}<button class="btn s g" onclick="logout()">Salir</button></div></header><main>${f[page]()}</main>`;
