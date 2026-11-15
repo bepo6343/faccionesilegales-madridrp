@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="dark">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Big+Shoulders+Display:wght@600;700;800&display=swap" rel="stylesheet">
+<title>Madrid Underground RP</title>
+<style>
+:root{color-scheme:dark;--bg:#14110e;--side:#0f0d0b;--card:#1d1915;--card2:#262119;--line:#372f25;--tx:#efe7d8;--mut:#9a8f7e;--ac:#d9283f;--ac2:#ffb224;--ok:#4ade80;--bad:#f87171;--warn:#3a2a08;--disp:'Big Shoulders Display','Arial Narrow',Impact,sans-serif;--body:'Barlow',system-ui,'Segoe UI',Roboto,sans-serif}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--tx);font:15px/1.5 var(--body);min-height:100vh;}
+h1,h2,h3{margin:0 0 .6rem;font-family:var(--disp);font-weight:700;letter-spacing:.01em}h2{font-size:1.5rem}h3{font-size:1.2rem;color:var(--ac2)}
+a{color:var(--ac2)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:1.1rem;margin-bottom:1rem;min-width:0}
+.grid{display:grid;gap:1rem}.g4{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+.stat{background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:.9rem}
+.stat small{color:var(--mut);display:block}.stat b{font-size:1.5rem}
+input,select,textarea{width:100%;background:#100d0a;color:var(--tx);border:1px solid var(--line);border-radius:8px;padding:.55rem .7rem;font:inherit}
+textarea{resize:vertical;min-height:70px}
+label{display:block;font-size:.8rem;color:var(--mut);margin:.5rem 0 .2rem}
+.row{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.7rem;align-items:end}
+.btn{background:var(--ac);color:#fff;border:0;border-radius:8px;padding:.55rem 1rem;cursor:pointer;font:inherit;font-weight:600;text-decoration:none;display:inline-block}
+.btn:hover{filter:brightness(1.12)}.btn.s{padding:.25rem .6rem;font-size:.8rem}.btn.g{background:var(--card2);border:1px solid var(--line);color:var(--tx)}.btn.ok{background:var(--ok);color:#04130a}.btn.d{background:#7f1d1d}
+:focus-visible{outline:2px solid var(--ac2);outline-offset:2px}
+table{width:100%;border-collapse:collapse;font-size:.88rem}
+th,td{text-align:left;padding:.5rem .45rem;border-bottom:1px solid var(--line);vertical-align:middle}
+th{color:var(--mut);font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.04em}
+.tw{overflow-x:auto}
+.badge{display:inline-block;padding:.1rem .55rem;border-radius:99px;font-size:.75rem;font-weight:700;border:1px solid}
+.ok{color:var(--ok)}.bad{color:var(--bad)}.mut{color:var(--mut)}
+.bar{height:8px;background:#100d0a;border-radius:9px;overflow:hidden;border:1px solid var(--line)}.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--ac),var(--ac2))}
+.posts{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1rem}
+.post{background:var(--card2);border:1px solid var(--line);border-radius:12px;overflow:hidden;min-width:0}
+.post img{width:100%;height:220px;object-fit:cover;display:block;background:#000}
+.post div{padding:.7rem}
+.post p{margin:.4rem 0;font-weight:600;overflow-wrap:anywhere}
+.tabs{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:1rem}
+.tabs button{background:var(--card2);color:var(--mut);border:1px solid var(--line);padding:.4rem .8rem;border-radius:8px;cursor:pointer;font:inherit}.tabs button.on{color:#fff;background:var(--ac);border-color:var(--ac)}
+.hint{font-size:.78rem;color:var(--mut);margin-top:.6rem}
+.err{color:var(--bad);font-size:.85rem;min-height:1.2rem;margin-top:.4rem}
+.fx{display:flex;gap:.5rem;flex-wrap:wrap;align-items:center}
+.mask{position:fixed;inset:0;background:#000b;display:grid;place-items:center;z-index:50;padding:16px}
+.dlg{max-width:380px;width:100%;margin:0}
+#toast{position:fixed;left:50%;bottom:16px;transform:translate(-50%,20px);background:var(--card2);color:var(--tx);border:1px solid var(--line);padding:.6rem 1rem;border-radius:10px;opacity:0;pointer-events:none;transition:.2s;z-index:60;max-width:90vw}
+#toast.show{opacity:1;transform:translate(-50%,0)}
+.sum{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.7rem;margin-bottom:1rem}
+.sum .stat b{font-size:1.3rem}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--ok);margin-right:.35rem}
+.dot.off{background:var(--line)}
+.badge2{display:inline-block;min-width:18px;padding:0 6px;border-radius:99px;background:var(--ac);color:#fff;font-size:.72rem;font-weight:700;text-align:center;margin-left:.3rem}
+.chips{display:flex;gap:.4rem;flex-wrap:wrap}
+.chip{background:var(--card2);border:1px solid var(--line);border-radius:99px;padding:.15rem .6rem;font-size:.85rem;cursor:pointer;color:var(--tx);font:inherit}
+.chip.on{border-color:var(--ac2);background:#33230a}
+.msgs{display:flex;flex-direction:column;gap:.4rem;max-height:420px;overflow-y:auto;padding:.4rem;background:#100d0a;border:1px solid var(--line);border-radius:10px;margin-bottom:.6rem}
+.msg{max-width:80%;padding:.4rem .7rem;border-radius:12px;background:var(--card2);overflow-wrap:anywhere}
+.msg.me{align-self:flex-end;background:#4a1520}
+.msg small{display:block;color:var(--mut);font-size:.7rem}
+.item{display:grid;gap:.4rem;background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:.8rem;min-width:0}
+.item img{max-width:100%;max-height:200px;object-fit:cover;border-radius:8px}
+.price{font-weight:800;color:var(--ac2);font-size:1.1rem}
+.cm{border-top:1px solid var(--line);margin-top:.5rem;padding-top:.5rem;font-size:.88rem}
+.cm p{margin:.15rem 0;overflow-wrap:anywhere}
+.hbar{display:grid;grid-template-columns:110px 1fr auto;gap:.5rem;align-items:center;font-size:.85rem;margin:.25rem 0}
+.sold{opacity:.55}
+code{background:#100d0a;padding:.1rem .35rem;border-radius:5px}
+
+.logo{font-family:var(--disp);font-weight:800;letter-spacing:.04em;font-size:1.35rem}.logo b{color:var(--ac)}
+.app{display:grid;grid-template-columns:260px minmax(0,1fr);min-height:100vh}
+.side{background:var(--side);border-right:1px solid var(--line);position:sticky;top:0;height:100vh;overflow-y:auto;display:flex;flex-direction:column;padding:1rem .7rem;z-index:30}
+.brand{display:flex;gap:.6rem;align-items:center;padding:.2rem .5rem 1rem}
+.brand svg{width:34px;height:34px;flex:none}
+.brand .logo{line-height:1}.brand small{display:block;color:var(--mut);font-size:.72rem;letter-spacing:.02em;font-family:var(--body);font-weight:500}
+.grp{margin:.9rem .5rem .3rem;color:var(--mut);font-size:.78rem;font-weight:600}
+.side button.nv{display:flex;align-items:center;gap:.7rem;width:100%;background:transparent;border:0;border-left:3px solid transparent;color:#cfc5b3;padding:.5rem .6rem;border-radius:0 8px 8px 0;cursor:pointer;font:inherit;text-align:left}
+.side button.nv svg{width:18px;height:18px;flex:none;opacity:.8}
+.side button.nv:hover{background:#ffffff0a;color:var(--tx)}
+.side button.nv.on{background:linear-gradient(90deg,#ffb2241f,transparent);border-left-color:var(--ac2);color:#fff;font-weight:600}
+.side button.nv.on svg{color:var(--ac2);opacity:1}
+.side .sp{flex:1}
+.me{display:flex;gap:.6rem;align-items:center;padding:.7rem .5rem;border-top:1px solid var(--line);margin-top:.8rem}
+.me .who{min-width:0;flex:1}.me .who b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.me .who small{color:var(--mut)}
+.av{width:38px;height:38px;border-radius:10px;display:grid;place-items:center;font-family:var(--disp);font-weight:800;font-size:1.15rem;color:#14110e;flex:none}
+.col{min-width:0;display:flex;flex-direction:column}
+.top{display:flex;align-items:center;gap:.7rem;padding:.7rem 1.4rem;border-bottom:1px solid var(--line);position:sticky;top:0;background:#14110ef2;backdrop-filter:blur(6px);z-index:20}
+.top h1{margin:0;font-size:1.7rem;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ib{position:relative;background:var(--card);border:1px solid var(--line);color:var(--tx);border-radius:10px;height:40px;min-width:40px;padding:0 .7rem;cursor:pointer;display:inline-flex;align-items:center;gap:.5rem;font:inherit}
+.ib:hover{border-color:var(--ac2)}.ib svg{width:18px;height:18px}
+.ib kbd{font:inherit;font-size:.75rem;color:var(--mut);border:1px solid var(--line);border-radius:5px;padding:0 .3rem}
+.ib .badge2{position:absolute;top:-6px;right:-6px;margin:0}
+.burger{display:none}
+main{padding:1.3rem 1.4rem 3rem;max-width:1180px;width:100%}
+.scrim{display:none}
+.npanel{position:fixed;top:60px;right:16px;width:min(360px,calc(100vw - 32px));max-height:70vh;overflow:auto;background:var(--card);border:1px solid var(--line);border-radius:14px;z-index:45;box-shadow:0 20px 50px #000a}
+.npanel .it{padding:.65rem .9rem;border-bottom:1px solid var(--line);font-size:.9rem}.npanel .it small{display:block;color:var(--mut)}
+.npanel h3{padding:.7rem .9rem 0;margin:0}
+.pal{width:min(560px,100%);align-self:start;margin-top:12vh;padding:0;overflow:hidden}
+.pal input{border:0;border-bottom:1px solid var(--line);border-radius:0;padding:1rem;font-size:1.05rem;background:transparent}
+.pal button{display:flex;gap:.7rem;align-items:center;width:100%;background:transparent;border:0;color:var(--tx);padding:.65rem 1rem;font:inherit;cursor:pointer;text-align:left}
+.pal button.on,.pal button:hover{background:#ffb2241a}.pal svg{width:18px;height:18px;color:var(--ac2)}
+/* panel de inicio */
+.hero{position:relative;overflow:hidden;border:1px solid var(--line);border-radius:16px;padding:1.4rem 1.5rem;margin-bottom:1rem;background:linear-gradient(105deg,var(--hc,#d9283f)22 0%,transparent 55%),var(--card)}
+.hero .sky{position:absolute;right:0;bottom:0;width:min(520px,60%);height:100%;opacity:.5;pointer-events:none}
+.hero h2{font-size:2.4rem;margin:0;line-height:1.05;position:relative}
+.hero p{margin:.3rem 0 0;color:var(--mut);position:relative}
+.rk{position:relative;margin-top:1.1rem;max-width:520px}
+.rk .l{display:flex;justify-content:space-between;font-size:.85rem;margin-bottom:.35rem}
+.rk .bar{height:12px}
+.ledger{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));border:1px solid var(--line);border-radius:14px;background:var(--card);margin-bottom:1rem;overflow:hidden}
+.ledger div{padding:.9rem 1.1rem;border-right:1px solid var(--line);border-bottom:1px solid var(--line);margin:0 -1px -1px 0}
+.ledger small{color:var(--mut);display:block}
+.ledger b{font-family:var(--disp);font-size:2.1rem;line-height:1.1;font-weight:700;display:block}
+.alert{display:flex;gap:.8rem;align-items:center;justify-content:space-between;flex-wrap:wrap;border:1px solid var(--ac2);background:#33230a;border-radius:12px;padding:.8rem 1rem;margin-bottom:1rem}
+.cols{display:grid;grid-template-columns:minmax(0,3fr) minmax(0,2fr);gap:1rem;align-items:start}
+.days{display:flex;gap:.5rem;align-items:flex-end;height:120px;margin-top:.5rem}
+.days div{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;font-size:.75rem;color:var(--mut)}
+.days i{display:block;width:100%;max-width:38px;background:linear-gradient(var(--ac2),var(--ac));border-radius:5px 5px 0 0;min-height:3px}
+.tl{list-style:none;margin:0;padding:0 0 0 .9rem;border-left:2px solid var(--line)}
+.tl li{position:relative;padding:0 0 .8rem .8rem;font-size:.9rem}
+.tl li:before{content:"";position:absolute;left:-1.45rem;top:.35rem;width:10px;height:10px;border-radius:50%;background:var(--ac2);border:2px solid var(--card)}
+.tl li.up:before{background:var(--ok)}.tl li.dn:before{background:var(--bad)}
+.tl small{color:var(--mut);display:block}
+.mrow{display:flex;align-items:center;gap:.6rem;padding:.45rem 0;border-bottom:1px solid var(--line)}.mrow:last-child{border:0}
+.mrow .av{width:32px;height:32px;font-size:1rem;border-radius:8px}.mrow .grow{flex:1;min-width:0}
+.qa{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.7rem;margin-bottom:1rem}
+.qa button{display:flex;gap:.6rem;align-items:center;background:var(--card);border:1px solid var(--line);color:var(--tx);border-radius:12px;padding:.8rem 1rem;cursor:pointer;font:inherit;font-weight:600;text-align:left}
+.qa button:hover{border-color:var(--ac2)}.qa svg{width:20px;height:20px;color:var(--ac2)}
+.chatbox{display:flex;flex-direction:column;height:min(70vh,620px)}
+.chatbox .msgs{flex:1;max-height:none}
+/* acceso */
+.login{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);min-height:100vh}
+.lbrand{position:relative;overflow:hidden;padding:2.5rem;display:flex;flex-direction:column;justify-content:flex-start;gap:14vh;background:radial-gradient(120% 80% at 20% 0%,#3b1a12 0%,#14110e 60%);border-right:1px solid var(--line)}
+.lbrand h1{font-size:clamp(3rem,7vw,6rem);line-height:.9;margin:0;font-weight:800;position:relative;z-index:1}
+.lbrand h1 span{display:block;color:var(--ac2)}
+.lbrand p{max-width:30ch;color:#cfc5b3;font-size:1.05rem;position:relative;z-index:1}
+.lbrand .sky{position:absolute;left:0;right:0;bottom:0;width:100%;height:40%;opacity:.85;pointer-events:none}
+.lbrand .win{animation:blink 5s steps(1) infinite}.lbrand .win:nth-child(3n){animation-delay:1.7s}.lbrand .win:nth-child(4n){animation-delay:3.1s}
+@keyframes blink{0%,100%{opacity:1}55%{opacity:.15}60%{opacity:1}}
+.lform{display:grid;place-items:center;padding:2rem 1.5rem}
+.lbox{width:100%;max-width:410px}
+.lbox h2{font-size:2.2rem;margin-bottom:.2rem}
+.mcards{display:grid;gap:.5rem}
+.mc{display:flex;align-items:center;gap:.8rem;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:.65rem .8rem;cursor:pointer;color:var(--tx);font:inherit;text-align:left;width:100%}
+.mc i{width:14px;height:14px;border-radius:4px;flex:none}.mc:hover{border-color:var(--mut)}
+.mc.on{border-color:var(--c);box-shadow:inset 0 0 0 1px var(--c);background:var(--card2)}
+.pw{position:relative}.pw input{padding-right:3.2rem}
+.pw button{position:absolute;right:4px;top:4px;bottom:4px;background:transparent;border:0;color:var(--mut);cursor:pointer;padding:0 .6rem;font:inherit;font-size:.8rem}
+.str{display:flex;gap:4px;margin-top:.4rem}.str i{flex:1;height:4px;border-radius:3px;background:var(--line)}
+.str.s1 i:nth-child(-n+1){background:var(--bad)}.str.s2 i:nth-child(-n+2){background:var(--ac2)}.str.s3 i:nth-child(-n+3){background:#a3e635}.str.s4 i{background:var(--ok)}
+.btn.big{width:100%;padding:.8rem 1rem;font-size:1.05rem;margin-top:.5rem;background:var(--ac2);color:#1a1209;font-family:var(--disp);letter-spacing:.04em;font-size:1.25rem}
+.lnk{background:none;border:0;color:var(--ac2);cursor:pointer;font:inherit;padding:0;text-decoration:underline}
+.seg{display:grid;grid-template-columns:1fr 1fr;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:4px;margin:1rem 0 .4rem}
+.seg button{background:transparent;border:0;color:var(--mut);padding:.55rem;border-radius:9px;cursor:pointer;font:inherit;font-weight:600}.seg button.on{background:var(--card2);color:var(--tx);box-shadow:0 0 0 1px var(--line)}
+.fld{font-size:.8rem;margin-top:.25rem;min-height:1rem}
+.centerbox{min-height:100vh;display:grid;place-items:center;padding:16px}
+.centerbox .card{max-width:440px}
+@media(prefers-reduced-motion:reduce){.lbrand .win{animation:none}*{transition:none!important}}
+@media(max-width:960px){
+ .app{grid-template-columns:1fr}
+ .side{position:fixed;left:0;top:0;bottom:0;width:272px;transform:translateX(-102%);transition:transform .2s}
+ body.nav .side{transform:none}
+ body.nav .scrim{display:block;position:fixed;inset:0;background:#000a;z-index:25}
+ .burger{display:inline-flex}.top{padding:.6rem 1rem}main{padding:1rem 1rem 3rem}
+ .cols{grid-template-columns:1fr}
+ .login{grid-template-columns:1fr}.lbrand{min-height:260px;padding:1.5rem}.lbrand h1{font-size:3.2rem}.lbrand p{display:none}
+ .hero h2{font-size:1.9rem}.hero .sky{opacity:.25}
+ .ib kbd{display:none}
+}
+</style>
+</head>
+<body>
+<div id="app"></div><div id="ovl"></div><div id="toast"></div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4/dist/umd/supabase.min.js"></script>
+<script>
+/* ============ PEGA AQUÍ LOS DOS DATOS DE TU PROYECTO DE SUPABASE ============ */
+const SUPABASE_URL="https://psxtwocqtrtnsubplkaz.supabase.co";        // Project URL  (empieza por https:// y acaba en .supabase.co)
+const SUPABASE_KEY="sb_publishable_VW7AJF6iP_bk52Olztsr_g_kJ0Chf7v";        // clave "anon public" o "publishable"
+/* ============================================================================== */
+
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const uid=()=>Math.random().toString(36).slice(2,10)+Date.now().toString(36).slice(-4);
+const money=n=>(Number(n)||0).toLocaleString('es-ES')+' €';
+const fdate=t=>new Date(t).toLocaleString('es-ES',{dateStyle:'short',timeStyle:'short'});
+const ago=t=>{if(!t)return'Nunca';const m=Math.floor((Date.now()-t)/60000);if(m<1)return'Ahora mismo';if(m<60)return'hace '+m+' min';if(m<1440)return'hace '+Math.floor(m/60)+' h';return fdate(t)};
+const num=(v,d)=>(v===''||v==null||!Number.isFinite(Number(v)))?d:Number(v);
+function canon(x){if(Array.isArray(x))return'['+x.map(canon).join(',')+']';if(x&&typeof x==='object')return'{'+Object.keys(x).sort().map(k=>JSON.stringify(k)+':'+canon(x[k])).join(',')+'}';return JSON.stringify(x)}
+
+const TIPOS=['Coche','Gasolinera','ATM / Cajero','Tienda 24h','Joyería','Banco','Camión de transporte','Casa','Otro'];
+const CATS=['Vehículos','Armamento (RP)','Documentación falsa','Joyas y objetos','Información','Servicios','Otros'];
+const EMOJIS=['😂','🔥','💀','👏'];
+const DOCS=['mafias','robos','posts','log','news','missions','mission_done','market','dm','comments','react','chat'];
+const DEFRANKS=[{n:'Banda emergente',p:0},{n:'Soldados',p:50},{n:'Capos',p:150},{n:'Cártel',p:300},{n:'Imperio',p:600}];
+const DEFSET={adUrl:'',adTitle:'Anuncio del servidor',adText:'',fee:15,ptsOk:10,ptsFail:-5,ptsLaunder:5,ranks:DEFRANKS};
+const SORTF={mafias:'ord'};
+
+let sb=null,session=null,me=null,recovering=false,hasUsers=true,loaded=false,bootErr='',loadedFor='',rt=null,touchT=null,joinMsg=false;
+let db={users:[],settings:{...DEFSET}};DOCS.forEach(c=>db[c]=[]);
+let cache={},last={},busy=0,q=Promise.resolve(),loadingAll=false;
+let page='inicio',atab='resumen',authMode='login',authErr='',authOk='',dmWith='',pendFile=null,mFilter={cat:'',open:true},rFilter={tipo:'',res:'',mafia:''};
+
+function toast(m){const t=$('#toast');t.textContent=m;t.className='show';clearTimeout(toast.t);toast.t=setTimeout(()=>{t.className=''},3800)}
+function ask(msg,fn,inp){
+ const o=$('#ovl');
+ o.innerHTML=`<div class="mask"><div class="card dlg" role="dialog"><p>${esc(msg)}</p>${inp?'<input id="dlgi" type="password" autocomplete="new-password" placeholder="Mínimo 6 caracteres">':''}<div class="fx" style="margin-top:.7rem"><button class="btn" id="dlgok">Aceptar</button><button class="btn g" id="dlgno">Cancelar</button></div></div></div>`;
+ const close=()=>{o.innerHTML=''};
+ $('#dlgno').onclick=close;$('#dlgok').onclick=()=>{const v=inp?$('#dlgi').value:true;close();fn(v)};
+ if(inp)$('#dlgi').focus();
+}
+function dl(name,txt,type){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([txt],{type:type||'text/plain'}));a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),2000)}
+function friendly(e){
+ const m=String((e&&(e.message||e.msg))||e||'');
+ if(/Invalid login credentials/i.test(m))return'Correo o contraseña incorrectos.';
+ if(/already registered|already been registered/i.test(m))return'Ese correo ya está registrado.';
+ if(m==='USUARIO_EXISTE')return'Ese usuario ya existe.';
+ if(/at least 6|Password should/i.test(m))return'La contraseña debe tener al menos 6 caracteres.';
+ if(/not confirmed/i.test(m))return'Debes confirmar el correo. El admin puede desactivar esta opción en Supabase.';
+ if(/rate limit|too many/i.test(m))return'Demasiados intentos. Espera unos minutos.';
+ if(/Database error saving new user/i.test(m))return'No se pudo crear la cuenta. Revisa el usuario y la mafia elegida.';
+ if(/invalid email|email address/i.test(m)&&/invalid/i.test(m))return'El correo no es válido.';
+ if(/Failed to fetch|NetworkError|network/i.test(m))return'Sin conexión con el servidor.';
+ return m||'Error desconocido.';
+}
+
+/* ---------- Datos: caché local sincronizada con Supabase ---------- */
+const isAdmin=()=>!!(me&&me.role==='admin');
+function setC(c,id,data){(cache[c]=cache[c]||{})[id]=data;last[c+'/'+id]=canon(data)}
+function delC(c,id){if(cache[c])delete cache[c][id];delete last[c+'/'+id]}
+function rebuild(c){
+ if(c==='settings'){db.settings=Object.assign({},DEFSET,(cache.settings||{}).main||{});return}
+ if(!DOCS.includes(c))return;
+ const f=SORTF[c]||'t';
+ db[c]=Object.values(cache[c]||{}).sort((a,b)=>(a[f]||0)-(b[f]||0));
+}
+const mapUser=r=>({id:r.id,username:r.username,role:r.role,mafiaId:r.mafia_id,created:Date.parse(r.created),lastSeen:Date.parse(r.last_seen)});
+async function fetchAll(mk){
+ let from=0,out=[];
+ for(;;){const{data,error}=await mk().range(from,from+999);if(error)throw error;out.push(...data);if(data.length<1000)break;from+=1000}
+ return out;
+}
+async function loadAll(silent){
+ if(loadingAll)return;loadingAll=true;
+ try{
+  const docs=await fetchAll(()=>sb.from('docs').select('col,id,data').order('col').order('id'));
+  cache={};last={};docs.forEach(r=>setC(r.col,r.id,r.data));
+  [...DOCS,'settings'].forEach(rebuild);
+  if(session){
+   const pr=await fetchAll(()=>sb.from('profiles').select('*').order('created').order('id'));
+   db.users=pr.map(mapUser);me=db.users.find(u=>u.id===session.user.id)||null;
+   if(!me){authErr='Tu perfil no existe o fue eliminado.';await sb.auth.signOut();loadingAll=false;return}
+  }else{
+   db.users=[];me=null;
+   const{data}=await sb.rpc('has_users');hasUsers=!!data;
+  }
+  bootErr='';
+ }catch(e){
+  if(!loaded)bootErr=friendly(e);else if(!silent)toast(friendly(e));
+ }
+ loadingAll=false;loaded=true;render();
+}
+function ops(){
+ const out=[],seen=new Set();
+ DOCS.forEach(c=>db[c].forEach(it=>{const k=c+'/'+it.id;seen.add(k);const s=canon(it);if(last[k]!==s)out.push([k,s,it])}));
+ if(isAdmin()){const it=Object.assign({id:'main'},db.settings);seen.add('settings/main');if(last['settings/main']!==canon(it))out.push(['settings/main',canon(it),it])}
+ Object.keys(last).forEach(k=>{const c=k.split('/')[0];if((DOCS.includes(c)||(c==='settings'&&isAdmin()))&&!seen.has(k))out.push([k,null,null])});
+ return out;
+}
+function save(){
+ const o=ops();if(!o.length)return;
+ const had=new Set(Object.keys(last));
+ o.forEach(([k,s,it])=>{const i=k.indexOf('/'),c=k.slice(0,i),id=k.slice(i+1);if(it)setC(c,id,JSON.parse(JSON.stringify(it)));else delC(c,id)});
+ busy++;
+ q=q.then(async()=>{
+  for(const[k,s,it]of o){
+   const i=k.indexOf('/'),c=k.slice(0,i),id=k.slice(i+1);let r;
+   if(!it)r=await sb.from('docs').delete().eq('col',c).eq('id',id);
+   else if(had.has(k))r=await sb.from('docs').update({data:it}).eq('col',c).eq('id',id);
+   else r=await sb.from('docs').insert({col:c,id,data:it});
+   if(r.error)throw r.error;
+  }
+ }).catch(e=>{toast(friendly(e));return loadAll(true)}).then(()=>{busy--});
+}
+
+/* ---------- Tiempo real ---------- */
+function startRealtime(){
+ stopRealtime();
+ rt=sb.channel('mrp')
+  .on('postgres_changes',{event:'*',schema:'public',table:'docs'},p=>{
+   if(p.eventType==='DELETE'){const o=p.old;if(o&&o.col){delC(o.col,o.id);rebuild(o.col);if(o.col==='settings')render();else soft()}}
+   else{const r=p.new;if(!r)return;const isNew=!(cache[r.col]&&cache[r.col][r.id]);setC(r.col,r.id,r.data);rebuild(r.col);notify(r.col,r.data,isNew);soft()}
+  })
+  .on('postgres_changes',{event:'*',schema:'public',table:'profiles'},p=>{
+   if(p.eventType==='DELETE'){const id=p.old&&p.old.id;db.users=db.users.filter(u=>u.id!==id);if(me&&id===me.id)logout();else soft()}
+   else{const u=mapUser(p.new),i=db.users.findIndex(x=>x.id===u.id);if(i<0)db.users.push(u);else db.users[i]=u;if(me&&u.id===me.id)me=u;soft()}
+  })
+  .subscribe();
+}
+function stopRealtime(){if(rt){try{sb.removeChannel(rt)}catch(e){}rt=null}}
+/* ---------- Utilidades ---------- */
+const mafia=id=>db.mafias.find(m=>m.id===id);
+const uname=id=>(db.users.find(u=>u.id===id)||{username:'(eliminado)'}).username;
+const getRanks=()=>{const r=db.settings.ranks;return(Array.isArray(r)&&r.length?[...r]:[...DEFRANKS]).sort((a,b)=>a.p-b.p)};
+const rankOf=p=>[...getRanks()].reverse().find(r=>p>=r.p)||getRanks()[0];
+const mpts=id=>db.log.filter(l=>l.mafiaId===id).reduce((a,l)=>a+(Number(l.pts)||0),0);
+const upts=id=>db.log.filter(l=>l.userId===id).reduce((a,l)=>a+(Number(l.pts)||0),0);
+const PT=()=>({ok:num(db.settings.ptsOk,10),fail:num(db.settings.ptsFail,-5),l:num(db.settings.ptsLaunder,5)});
+const mbadge=id=>{const m=mafia(id);return m?`<span class="badge" style="color:${esc(m.color)};border-color:${esc(m.color)}">${esc(m.name)}</span>`:'<span class="badge mut">Sin mafia</span>'};
+function addLog(mafiaId,userId,type,desc,pts,roboId){
+ const before=rankOf(mpts(mafiaId));
+ db.log.push({id:uid(),t:Date.now(),mafiaId,userId,type,desc,pts,roboId:roboId||''});
+ const after=rankOf(mpts(mafiaId));
+ if(before.n!==after.n){const up=after.p>before.p;db.log.push({id:uid(),t:Date.now()+1,mafiaId,userId:'',type:up?'ascenso':'descenso',desc:`${before.n} → ${after.n}`,pts:0,roboId:''})}
+}
+async function logout(){await sb.auth.signOut()}
+
+/* ---------- Iconos y diseño ---------- */
+const IC={home:'M3 11l9-8 9 8M5 10v10h5v-6h4v6h5V10',users:'M16 19v-1a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v1M9.5 10a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7M21 19v-1a4 4 0 0 0-3-3.9M16 3.2a3.5 3.5 0 0 1 0 6.6',chat:'M21 12a8 8 0 0 1-11.6 7.1L3 20l1-5.2A8 8 0 1 1 21 12z',bag:'M6 8h12l1 12H5L6 8zM9 8V6a3 3 0 0 1 6 0v2',wash:'M3 7c2-3 4-3 6 0s4 3 6 0 4-3 6 0M3 13c2-3 4-3 6 0s4 3 6 0 4-3 6 0M3 19c2-3 4-3 6 0s4 3 6 0 4-3 6 0',target:'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM12 16a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM12 12h.01',cam:'M4 7h3l2-3h6l2 3h3v13H4zM12 17a4 4 0 1 0 0-8 4 4 0 0 0 0 8z',tag:'M3 12V3h9l9 9-9 9-9-9zM7.5 7.5h.01',mail:'M3 5h18v14H3zM3 6l9 7 9-7',cup:'M8 4h8v6a4 4 0 0 1-8 0V4zM8 6H4v2a3 3 0 0 0 4 3M16 6h4v2a3 3 0 0 1-4 3M12 14v4M8 20h8',user:'M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM4 21a8 8 0 0 1 16 0',shield:'M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6l8-3z',bell:'M6 16V11a6 6 0 1 1 12 0v5l2 2H4l2-2zM10 21h4',search:'M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14zM20 20l-4-4',menu:'M4 6h16M4 12h16M4 18h16',out:'M9 4H5v16h4M16 8l4 4-4 4M20 12H9',plus:'M12 5v14M5 12h14'};
+const ico=n=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${IC[n]||''}"/></svg>`;
+const NAV=[
+ ['Principal',[['inicio','Panel','home'],['mafia','Mi mafia','users'],['chat','Chat de mafia','chat']]],
+ ['Actividad',[['robos','Robos','bag'],['blanqueo','Blanqueo','wash'],['misiones','Misiones','target']]],
+ ['Comunidad',[['foro','Foro','cam'],['mercado','Mercado negro','tag'],['mensajes','Mensajes','mail'],['progreso','Ranking','cup']]],
+ ['Cuenta',[['perfil','Mi perfil','user']]]
+];
+const ADMINNAV=['Administración',[['admin','Panel admin','shield']]];
+const allPages=()=>[...NAV,...(isAdmin()?[ADMINNAV]:[])].flatMap(g=>g[1]);
+function sky(){
+ let s='',r=7;const rnd=()=>(r=(r*9301+49297)%233280)/233280;
+ const B=[[0,40,60],[44,30,95],[78,36,70],[118,26,120],[148,40,85],[200,34,150,'t'],[238,34,175,'t'],[276,34,160,'t'],[314,34,190,'t'],[354,30,90],[388,44,110],[436,28,70],[468,38,100],[510,30,65],[544,56,80]];
+ B.forEach(([x,w,h,t])=>{const y=200-h;s+=`<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${t?'#241c15':'#1b1510'}"/>`;
+  for(let wy=y+8;wy<196;wy+=11)for(let wx=x+5;wx<x+w-6;wx+=9)if(rnd()>.72)s+=`<rect class="win" x="${wx}" y="${wy}" width="3.5" height="5" fill="#ffb224"/>`});
+ s+=`<polygon points="130,200 150,62 164,66 148,200" fill="#2a2018"/><polygon points="168,200 186,70 198,76 180,200" fill="#2a2018"/>`;
+ return`<svg class="sky" viewBox="0 0 600 200" preserveAspectRatio="xMaxYMax slice" aria-hidden="true">${s}</svg>`;
+}
+const MARK=`<svg viewBox="0 0 34 34" aria-hidden="true"><rect width="34" height="34" rx="8" fill="#d9283f"/><path d="M7 26V12l5 7 5-9 5 9 5-7v14" fill="none" stroke="#14110e" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round"/></svg>`;
+const avatar=(u,c)=>{const m=mafia(u&&u.mafiaId);return`<span class="av" style="background:${esc(c||(m&&m.color)||'#ffb224')}">${esc(((u&&u.username)||'?')[0].toUpperCase())}</span>`};
+const online=u=>Date.now()-(u.lastSeen||0)<300000;
+
+/* ---------- Avisos ---------- */
+let notifs=[],nOpen=false,navOpen=false,chatUn=0,chatMafia='',authVals={u:'',e:'',m:''},palI=0;
+function alertN(txt){notifs.unshift({t:Date.now(),txt});notifs=notifs.slice(0,30);toast(txt);if(me)soft()}
+function notify(c,d,isNew){
+ if(!me)return;
+ if(c==='news'&&isNew)alertN('📰 Noticia: '+d.title);
+ if(c==='dm'&&d.to===me.id&&isNew){
+  if(page==='mensajes'&&dmWith===d.from){markRead(d.from)}
+  else alertN('✉️ Mensaje de '+uname(d.from));
+ }
+ if(c==='chat'&&isNew&&d.userId!==me.id&&d.mafiaId===me.mafiaId&&page!=='chat'){chatUn++;alertN('💬 '+uname(d.userId)+': '+d.text.slice(0,60))}
+ if(c==='mission_done'&&d.userId===me.id&&d.status!=='pending'&&!isNew)alertN(d.status==='approved'?'✅ Misión aprobada':'❌ Misión rechazada');
+ if(c==='market'&&isNew&&d.userId!==me.id)alertN('🕶️ Nuevo en el mercado negro: '+d.title);
+ if(c==='missions'&&isNew&&(!d.mafiaId||d.mafiaId===me.mafiaId))alertN('🎯 Nueva misión: '+d.title);
+}
+function soft(){
+ if(!loaded||$('#ovl').innerHTML)return;
+ const a=document.activeElement;
+ if(page==='chat'&&a&&a.id==='cht'){const m=$('#msgs');if(m){m.innerHTML=chatMsgs();m.scrollTop=m.scrollHeight}return}
+ if(a&&/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName))return;
+ render();
+}
+function go(p){page=p;navOpen=false;nOpen=false;if(p==='chat')chatUn=0;render();window.scrollTo(0,0)}
+function toggleNav(){navOpen=!navOpen;document.body.classList.toggle('nav',navOpen)}
+function toggleN(){nOpen=!nOpen;render()}
+
+/* ---------- Paleta de búsqueda (Ctrl+K) ---------- */
+function closeOvl(){$('#ovl').innerHTML=''}
+function openPal(){
+ if(!me)return;
+ $('#ovl').innerHTML=`<div class="mask" onclick="if(event.target===this)closeOvl()"><div class="card pal" role="dialog" aria-label="Ir a…"><input id="pq" placeholder="Ir a… (robos, mercado, ranking)" autocomplete="off" oninput="palI=0;palList()" onkeydown="palKey(event)"><div id="pl"></div></div></div>`;
+ palI=0;palList();$('#pq').focus();
+}
+function palItems(){const q=($('#pq')||{value:''}).value.toLowerCase().trim();return allPages().filter(p=>!q||p[1].toLowerCase().includes(q)||p[0].includes(q))}
+function palList(){const it=palItems();if(palI>=it.length)palI=0;$('#pl').innerHTML=it.length?it.map((p,i)=>`<button class="${i===palI?'on':''}" onclick="closeOvl();go('${p[0]}')">${ico(p[2])}${esc(p[1])}</button>`).join(''):'<p class="mut" style="padding:1rem;margin:0">Nada encontrado.</p>'}
+function palKey(e){const it=palItems();
+ if(e.key==='ArrowDown'){palI=(palI+1)%Math.max(1,it.length);palList();e.preventDefault()}
+ else if(e.key==='ArrowUp'){palI=(palI-1+it.length)%Math.max(1,it.length);palList();e.preventDefault()}
+ else if(e.key==='Enter'&&it[palI]){closeOvl();go(it[palI][0])}}
+document.addEventListener('keydown',e=>{
+ if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'){e.preventDefault();$('#ovl').innerHTML?closeOvl():openPal()}
+ else if(e.key==='Escape'){if($('#ovl').querySelector('.pal'))closeOvl();else if(nOpen){nOpen=false;render()}else if(navOpen)toggleNav()}
+});
+
+/* ---------- Acceso ---------- */
+function authSet(m){authMode=m;authErr='';authOk='';render()}
+function av_(k,v){authVals[k]=v}
+function pwStrength(p){let s=0;if(p.length>=6)s++;if(p.length>=10)s++;if(/[A-Z]/.test(p)&&/[a-z]/.test(p))s++;if(/\d/.test(p)&&/[^A-Za-z0-9]/.test(p)||p.length>=14)s++;return p?Math.max(1,s):0}
+function onPw(el){
+ const s=$('#str');if(s){const v=pwStrength(el.value);s.className='str'+(v?' s'+v:'')}
+ const n=$('#fpw');if(n&&authMode!=='login'){n.textContent=el.value&&el.value.length<6?'Mínimo 6 caracteres.':'';n.className='fld bad'}
+}
+function onUser(el){
+ av_('u',el.value);const n=$('#fu');if(!n)return;
+ if(!el.value){n.textContent='';return}
+ const ok=/^[A-Za-z0-9._-]{3,20}$/.test(el.value);n.textContent=ok?'':'3-20 caracteres: letras, números, punto, guion.';n.className='fld bad';
+}
+function onEmail(el){av_('e',el.value)}
+function capsCheck(ev){const n=$('#fcaps');if(n)n.textContent=ev.getModifierState&&ev.getModifierState('CapsLock')?'Mayúsculas activadas.':''}
+function togglePw(){const i=$('#ap'),b=$('#pwt');const h=i.type==='password';i.type=h?'text':'password';b.textContent=h?'Ocultar':'Mostrar'}
+function pickM(id){authVals.m=id;document.querySelectorAll('.mc').forEach(b=>{const on=b.dataset.id===id;b.classList.toggle('on',on);b.setAttribute('aria-checked',on)})}
+async function doAuth(){
+ authErr='';authOk='';
+ const g=id=>($(id)?$(id).value.trim():'');
+ const btn=$('#abtn');if(btn){btn.disabled=true;btn.textContent='Un momento…'}
+ try{
+  if(authMode==='login'){
+   const{error}=await sb.auth.signInWithPassword({email:g('#ae'),password:$('#ap').value});if(error)throw error;
+  }else if(authMode==='register'){
+   const un=g('#au'),em=g('#ae'),pw=$('#ap').value,mid=authVals.m;
+   if(!/^[A-Za-z0-9._-]{3,20}$/.test(un))throw{message:'Usuario: 3-20 caracteres (letras, números, . _ -).'};
+   if(!/^\S+@\S+\.\S+$/.test(em))throw{message:'Escribe un correo válido.'};
+   if(pw.length<6)throw{message:'La contraseña debe tener al menos 6 caracteres.'};
+   if(!mafia(mid))throw{message:'Elige una mafia.'};
+   const f=await sb.rpc('username_free',{un});if(f.error)throw f.error;if(!f.data)throw{message:'USUARIO_EXISTE'};
+   joinMsg=true;
+   const{data,error}=await sb.auth.signUp({email:em,password:pw,options:{data:{username:un,mafia_id:mid}}});
+   if(error){joinMsg=false;throw error}
+   if(!data.session){joinMsg=false;authMode='login';authOk='Cuenta creada. Confirma tu correo y después entra.'}
+  }else if(authMode==='forgot'){
+   const{error}=await sb.auth.resetPasswordForEmail(g('#ae'),{redirectTo:location.href.split('#')[0]});if(error)throw error;
+   authMode='login';authOk='Si el correo existe, te hemos enviado un enlace para cambiar la contraseña.';
+  }else if(authMode==='recover'){
+   const pw=$('#ap').value;if(pw.length<6)throw{message:'La contraseña debe tener al menos 6 caracteres.'};
+   const{error}=await sb.auth.updateUser({password:pw});if(error)throw error;
+   recovering=false;authMode='login';toast('Contraseña cambiada.');
+  }
+ }catch(e){authErr=friendly(e)}
+ render();
+}
+function renderAuth(){
+ const m=authMode,reg=m==='register';
+ if(!authVals.m||!mafia(authVals.m))authVals.m=(db.mafias[0]||{}).id||'';
+ const k=`onkeydown="if(event.key==='Enter')doAuth()"`;
+ const title={login:'Entra a tu mafia',register:'Crea tu cuenta',forgot:'Recupera tu acceso',recover:'Nueva contraseña'}[m];
+ const sub={login:'Con tu correo y tu contraseña.',register:'Elige tu mafia y empieza a sumar puntos.',forgot:'Te enviamos un enlace para cambiarla.',recover:'Escribe la contraseña nueva.'}[m];
+ const seg=m==='forgot'||m==='recover'?'':`<div class="seg" role="tablist"><button role="tab" class="${m==='login'?'on':''}" onclick="authSet('login')">Entrar</button><button role="tab" class="${reg?'on':''}" onclick="authSet('register')">Registrarse</button></div>`;
+ $('#app').innerHTML=`<div class="login"><section class="lbrand"><div class="brand" style="padding:0">${MARK}<div class="logo">MADRID <b>UNDERGROUND</b></div></div>
+ <div><h1>Madrid<span>no duerme.</span></h1><p>Registra robos, blanquea el botín y sube de rango con tu mafia.</p>
+ <div class="chips" style="margin-top:1rem;position:relative;z-index:1">${db.mafias.map(x=>`<span class="badge" style="color:${esc(x.color)};border-color:${esc(x.color)};background:#14110ecc">${esc(x.name)}</span>`).join('')}</div></div>${sky()}</section>
+ <section class="lform"><div class="lbox"><h2>${title}</h2><p class="mut" style="margin:0">${sub}</p>${seg}
+ ${reg?`<label for="au">Nombre de usuario</label><input id="au" autocomplete="username" maxlength="20" value="${esc(authVals.u)}" oninput="onUser(this)" ${k}><div class="fld" id="fu"></div>`:''}
+ ${m!=='recover'?`<label for="ae">Correo</label><input id="ae" type="email" autocomplete="email" value="${esc(authVals.e)}" oninput="onEmail(this)" ${k}>`:''}
+ ${m!=='forgot'?`<label for="ap">${m==='recover'?'Nueva contraseña':'Contraseña'}</label><div class="pw"><input id="ap" type="password" autocomplete="${m==='login'?'current-password':'new-password'}" oninput="onPw(this)" onkeyup="capsCheck(event)" ${k}><button type="button" id="pwt" onclick="togglePw()">Mostrar</button></div><div class="fld mut" id="fcaps"></div>${m!=='login'?`<div class="str" id="str"><i></i><i></i><i></i><i></i></div><div class="fld" id="fpw"></div>`:''}`:''}
+ ${reg?`<label>Tu mafia</label><div class="mcards" role="radiogroup" aria-label="Mafia">${db.mafias.map(x=>`<button type="button" role="radio" aria-checked="${authVals.m===x.id}" class="mc ${authVals.m===x.id?'on':''}" data-id="${esc(x.id)}" style="--c:${esc(x.color)}" onclick="pickM('${esc(x.id)}')"><i style="background:${esc(x.color)}"></i><b>${esc(x.name)}</b></button>`).join('')}</div>`:''}
+ <div class="err" role="alert">${esc(authErr)}</div>${authOk?`<div class="ok" style="font-size:.9rem;margin-bottom:.4rem">${esc(authOk)}</div>`:''}
+ <button class="btn big" id="abtn" onclick="doAuth()">${{login:'Entrar',register:'Crear cuenta',forgot:'Enviar enlace',recover:'Guardar contraseña'}[m]}</button>
+ <p class="hint">${m==='login'?`<button class="lnk" onclick="authSet('forgot')">He olvidado mi contraseña</button>`:''}${m==='forgot'?`<button class="lnk" onclick="authSet('login')">Volver a entrar</button>`:''}</p>
+ ${reg&&!hasUsers?'<p class="hint">Todavía no hay usuarios: la primera cuenta que se cree será la del administrador.</p>':''}
+ <p class="hint">Contenido de rol / ficción dentro del servidor.</p></div></section></div>`;
+}
+
+/* ---------- Inicio ---------- */
+function stats(mid){
+ const r=db.robos.filter(x=>x.mafiaId===mid),ok=r.filter(x=>x.success);
+ return{n:r.length,ok:ok.length,fail:r.length-ok.length,total:ok.reduce((a,x)=>a+x.amount,0),laund:r.filter(x=>x.laundered).reduce((a,x)=>a+x.cleanAmount,0),pts:mpts(mid)};
+}
+function adCard(){
+ const s=db.settings;if(!s.adUrl&&!s.adText)return'';
+ return`<div class="card"><h3>📢 ${esc(s.adTitle||'Anuncio')}</h3>${s.adText?`<p>${esc(s.adText)}</p>`:''}${s.adUrl?`<iframe src="${esc(s.adUrl)}" loading="lazy" referrerpolicy="no-referrer" style="width:100%;height:380px;border:1px solid var(--line);border-radius:10px;background:#fff"></iframe><p class="hint"><a href="${esc(s.adUrl)}" target="_blank" rel="noopener">Abrir anuncio en una pestaña nueva ↗</a></p>`:''}</div>`;
+}
+function newsCard(){
+ const n=[...db.news].sort((a,b)=>b.t-a.t).slice(0,4);
+ return`<div class="card"><h3>Novedades</h3>${n.length?n.map(x=>`<div class="cm" style="border:0;margin:0 0 .7rem;padding:0"><b>${esc(x.title)}</b> <span class="mut">· ${ago(x.t)}</span><p>${esc(x.text)}</p></div>`).join(''):'<p class="mut">Sin novedades. Cuando el admin publique algo, lo verás aquí.</p>'}</div>`;
+}
+function greet(){const h=new Date().getHours();return h<6?'Buenas noches':h<13?'Buenos días':h<21?'Buenas tardes':'Buenas noches'}
+function tlList(a){
+ if(!a.length)return'<p class="mut">Sin actividad todavía. Registra tu primer robo.</p>';
+ return`<ul class="tl">${a.map(l=>`<li class="${l.type==='ascenso'?'up':l.type==='descenso'?'dn':''}"><b>${l.type==='ascenso'?'Ascenso: ':l.type==='descenso'?'Descenso: ':''}${esc(l.desc)}</b><small>${esc(l.userId?uname(l.userId):'Sistema')} · ${ago(l.t)}${l.pts?` · <span class="${l.pts>0?'ok':'bad'}">${l.pts>0?'+':''}${l.pts} pts</span>`:''}</small></li>`).join('')}</ul>`;
+}
+function pInicio(){
+ const m=mafia(me.mafiaId),scopeR=m?db.robos.filter(r=>r.mafiaId===m.id):db.robos;
+ let h='';
+ if(m){const s=stats(m.id),rk=rankOf(s.pts),nx=getRanks().find(r=>r.p>s.pts),pct=nx?Math.max(0,Math.min(100,(s.pts-rk.p)/(nx.p-rk.p)*100)):100;
+  h+=`<div class="hero" style="--hc:${esc(m.color)}">${sky()}<h2>${greet()}, ${esc(me.username)}</h2><p>${esc(m.name)} · rango ${esc(rk.n)}</p>
+  <div class="rk"><div class="l"><b>${s.pts} puntos</b><span class="mut">${nx?`faltan ${nx.p-s.pts} para ${esc(nx.n)}`:'rango máximo'}</span></div><div class="bar"><i style="width:${pct}%"></i></div></div></div>`;
+  const rate=s.n?Math.round(s.ok/s.n*100):0;
+  h+=`<div class="ledger"><div><small>Mis puntos</small><b>${upts(me.id)}</b></div><div><small>Robos exitosos</small><b class="ok">${s.ok}</b><small>${rate}% de acierto</small></div><div><small>Botín total</small><b>${money(s.total)}</b></div><div><small>Dinero limpio</small><b>${money(s.laund)}</b></div></div>`;
+ }else h+=`<div class="hero"><h2>${greet()}, ${esc(me.username)}</h2><p>No perteneces a ninguna mafia. Pide al admin que te asigne una.</p></div>`;
+ const pend=db.robos.filter(r=>r.success&&!r.laundered&&(isAdmin()?(!m||r.mafiaId===m.id):r.userId===me.id));
+ if(pend.length)h+=`<div class="alert"><span>Tienes <b>${pend.length}</b> robo(s) sin blanquear por <b>${money(pend.reduce((a,r)=>a+r.amount,0))}</b>.</span><button class="btn s" onclick="go('blanqueo')">Ir a blanqueo</button></div>`;
+ h+=`<div class="qa"><button onclick="go('robos')">${ico('bag')}Registrar robo</button><button onclick="go('foro')">${ico('cam')}Publicar en el foro</button><button onclick="go('mercado')">${ico('tag')}Mercado negro</button><button onclick="go('chat')">${ico('chat')}Chat de mafia${chatUn?`<span class="badge2">${chatUn}</span>`:''}</button></div>`;
+ const days=[...Array(7)].map((_,i)=>{const d=new Date();d.setHours(0,0,0,0);d.setDate(d.getDate()-(6-i));return{d,n:0}});
+ scopeR.forEach(r=>{const x=days.find(y=>r.t>=y.d.getTime()&&r.t<y.d.getTime()+864e5);if(x)x.n++});
+ const mx=Math.max(1,...days.map(d=>d.n));
+ const open=db.missions.filter(x=>x.status==='open'&&(!x.mafiaId||x.mafiaId===me.mafiaId));
+ const top=db.users.filter(u=>!m||u.mafiaId===m.id).map(u=>({u,p:upts(u.id)})).sort((a,b)=>b.p-a.p).slice(0,5);
+ const rec=[...db.log].filter(l=>!m||l.mafiaId===m.id).sort((a,b)=>b.t-a.t).slice(0,8);
+ h+=`<div class="cols"><div>${newsCard()}${adCard()}<div class="card"><h3>Actividad reciente</h3>${tlList(rec)}</div></div>
+ <div><div class="card"><h3>Robos de los últimos 7 días</h3><div class="days">${days.map(d=>`<div><span>${d.n||''}</span><i style="height:${Math.round(d.n/mx*80)}%"></i><span>${d.d.toLocaleDateString('es-ES',{weekday:'narrow'})}</span></div>`).join('')}</div></div>
+ <div class="card"><h3>Misiones abiertas</h3>${open.length?open.slice(0,4).map(x=>`<div class="mrow"><div class="grow"><b>${esc(x.title)}</b></div><span class="ok">+${num(x.reward,0)}</span></div>`).join('')+`<p style="margin:.6rem 0 0"><button class="lnk" onclick="go('misiones')">Ver todas</button></p>`:'<p class="mut">No hay misiones ahora mismo.</p>'}</div>
+ <div class="card"><h3>${m?'Mejores de tu mafia':'Mejores miembros'}</h3>${top.length?top.map((x,i)=>`<div class="mrow">${avatar(x.u)}<div class="grow"><b>${esc(x.u.username)}</b></div><span class="${x.p>=0?'ok':'bad'}">${x.p} pts</span></div>`).join(''):'<p class="mut">Aún no hay miembros.</p>'}</div></div></div>`;
+ return h;
+}
+function logTable(a){
+ if(!a.length)return'<p class="mut">Sin actividad todavía.</p>';
+ return`<div class="tw"><table><tr><th>Fecha</th><th>Mafia</th><th>Miembro</th><th>Evento</th><th>Pts</th></tr>${a.map(l=>`<tr><td>${fdate(l.t)}</td><td>${mbadge(l.mafiaId)}</td><td>${esc(l.userId?uname(l.userId):'—')}</td><td>${l.type==='ascenso'?'⬆️ ASCENSO: ':l.type==='descenso'?'⬇️ DESCENSO: ':''}${esc(l.desc)}</td><td class="${l.pts>0?'ok':l.pts<0?'bad':'mut'}">${l.pts>0?'+':''}${l.pts}</td></tr>`).join('')}</table></div>`;
+}
+
+/* ---------- Mi mafia y chat ---------- */
+function pMafia(){
+ const m=mafia(me.mafiaId);
+ if(!m)return`<div class="card"><h2>Sin mafia</h2><p class="mut">Todavía no perteneces a ninguna. Pide al admin que te asigne una desde Panel admin › Usuarios.</p></div>`;
+ const s=stats(m.id),rk=rankOf(s.pts),mem=db.users.filter(u=>u.mafiaId===m.id).sort((a,b)=>upts(b.id)-upts(a.id));
+ const rank=[...db.mafias].sort((a,b)=>mpts(b.id)-mpts(a.id)).findIndex(x=>x.id===m.id)+1;
+ return`<div class="hero" style="--hc:${esc(m.color)}"><h2>${esc(m.name)}</h2><p>Rango ${esc(rk.n)} · puesto ${rank} de ${db.mafias.length} · ${mem.length} miembro(s), ${mem.filter(online).length} en línea</p></div>
+ <div class="ledger"><div><small>Puntos</small><b>${s.pts}</b></div><div><small>Robos</small><b>${s.n}</b><small>${s.ok} éxitos · ${s.fail} fallos</small></div><div><small>Botín</small><b>${money(s.total)}</b></div><div><small>Dinero limpio</small><b>${money(s.laund)}</b></div></div>
+ <div class="cols"><div class="card"><h3>Miembros</h3>${mem.map(u=>`<div class="mrow">${avatar(u)}<div class="grow"><b>${esc(u.username)}</b> ${u.role==='admin'?'<span class="badge mut">Admin</span>':''}<br><small class="mut"><span class="dot ${online(u)?'':'off'}"></span>${online(u)?'En línea':ago(u.lastSeen)}</small></div><span class="${upts(u.id)>=0?'ok':'bad'}">${upts(u.id)} pts</span>${u.id!==me.id?`<button class="btn s g" onclick="dmWith='${u.id}';markRead('${u.id}');go('mensajes')">Mensaje</button>`:''}</div>`).join('')}</div>
+ <div class="card"><h3>Actividad de la mafia</h3>${tlList([...db.log].filter(l=>l.mafiaId===m.id).sort((a,b)=>b.t-a.t).slice(0,12))}</div></div>`;
+}
+function chatList(){
+ const mid=isAdmin()?(chatMafia||me.mafiaId||(db.mafias[0]||{}).id):me.mafiaId;
+ return db.chat.filter(c=>c.mafiaId===mid).slice(-120);
+}
+function chatMsgs(){
+ const l=chatList();
+ return l.length?l.map(c=>`<div class="msg ${c.userId===me.id?'me':''}"><small>${esc(uname(c.userId))} · ${fdate(c.t)}${c.userId===me.id||isAdmin()?` <a href="#" class="mut" onclick="delChat('${c.id}');return false" aria-label="Borrar mensaje">✕</a>`:''}</small>${esc(c.text)}</div>`).join(''):'<p class="mut">El chat está vacío. Escribe el primer mensaje a tu mafia.</p>';
+}
+function sendChat(){
+ const el=$('#cht'),t=el?el.value.trim().slice(0,400):'';if(!t)return;
+ const mid=isAdmin()?(chatMafia||me.mafiaId):me.mafiaId;if(!mid)return toast('Necesitas una mafia.');
+ db.chat.push({id:uid(),mafiaId:mid,userId:me.id,text:t,t:Date.now()});save();el.value='';
+ const m=$('#msgs');if(m){m.innerHTML=chatMsgs();m.scrollTop=m.scrollHeight}
+}
+function delChat(id){db.chat=db.chat.filter(c=>c.id!==id);save();render()}
+function pChat(){
+ const mid=isAdmin()?(chatMafia||me.mafiaId||(db.mafias[0]||{}).id):me.mafiaId;
+ if(!mid)return`<div class="card"><h2>Chat de mafia</h2><p class="mut">Necesitas una mafia para usar el chat.</p></div>`;
+ return`<div class="card chatbox"><div class="fx" style="justify-content:space-between;margin-bottom:.5rem"><h2 style="margin:0">Chat de ${esc((mafia(mid)||{}).name||'mafia')}</h2>${isAdmin()?`<select aria-label="Mafia" style="max-width:220px" onchange="chatMafia=this.value;render()">${db.mafias.map(x=>`<option value="${esc(x.id)}" ${x.id===mid?'selected':''}>${esc(x.name)}</option>`).join('')}</select>`:'<span class="mut">Solo lo ve tu mafia y el admin</span>'}</div>
+ <div class="msgs" id="msgs">${chatMsgs()}</div><div class="fx"><input id="cht" maxlength="400" placeholder="Escribe a tu mafia…" aria-label="Mensaje" autocomplete="off" style="flex:1;min-width:160px" onkeydown="if(event.key==='Enter')sendChat()"><button class="btn" onclick="sendChat()">Enviar</button></div></div>`;
+}
+
+/* ---------- Estructura de la página ---------- */
+function render(){
+ if(!loaded){$('#app').innerHTML='<div class="centerbox"><div class="card"><p class="mut">Cargando…</p></div></div>';return}
+ if(bootErr){$('#app').innerHTML=`<div class="centerbox"><div class="card"><h2>No se pudo cargar la web</h2><p class="bad">${esc(bootErr)}</p><button class="btn" onclick="location.reload()">Reintentar</button></div></div>`;return}
+ document.body.classList.toggle('nav',navOpen&&!!me);
+ if(recovering||!session||!me)return renderAuth();
+ const un=unread(),f={inicio:pInicio,mafia:pMafia,chat:pChat,robos:pRobos,blanqueo:pBlanqueo,mercado:pMercado,misiones:pMisiones,foro:pForo,mensajes:pMensajes,progreso:pProgreso,perfil:pPerfil,admin:pAdmin};
+ if(!f[page]||(page==='admin'&&!isAdmin()))page='inicio';
+ const badge={mensajes:un,chat:chatUn,admin:isAdmin()&&db.mission_done.some(d=>d.status==='pending')?'!':0};
+ const side=[...NAV,...(isAdmin()?[ADMINNAV]:[])].map(g=>`<div class="grp">${g[0]}</div>`+g[1].map(p=>`<button class="nv ${page===p[0]?'on':''}" onclick="go('${p[0]}')" ${page===p[0]?'aria-current="page"':''}>${ico(p[2])}<span>${p[1]}</span>${badge[p[0]]?`<span class="badge2" style="margin-left:auto">${badge[p[0]]}</span>`:''}</button>`).join('')).join('');
+ const title=(allPages().find(p=>p[0]===page)||[0,''])[1];
+ const nb=notifs.length?`<span class="badge2">${notifs.length>9?'9+':notifs.length}</span>`:'';
+ $('#app').innerHTML=`<div class="app"><aside class="side" aria-label="Menú"><div class="brand">${MARK}<div><div class="logo">MADRID <b>UNDERGROUND</b></div><small>Panel de mafias</small></div></div>${side}<div class="sp"></div>
+ <div class="me">${avatar(me)}<div class="who"><b>${esc(me.username)}</b><small>${esc((mafia(me.mafiaId)||{name:'Sin mafia'}).name)}${isAdmin()?' · Admin':''}</small></div><button class="ib" onclick="logout()" aria-label="Cerrar sesión" title="Cerrar sesión">${ico('out')}</button></div></aside>
+ <div class="scrim" onclick="toggleNav()"></div>
+ <div class="col"><div class="top"><button class="ib burger" onclick="toggleNav()" aria-label="Abrir menú">${ico('menu')}</button><h1>${esc(title)}</h1>
+ <button class="ib" onclick="openPal()" aria-label="Buscar página">${ico('search')}<kbd>Ctrl K</kbd></button>
+ <button class="ib" onclick="toggleN()" aria-label="Avisos">${ico('bell')}${nb}</button></div>
+ <main>${f[page]()}</main></div></div>
+ ${nOpen?`<div class="npanel" role="dialog" aria-label="Avisos"><h3>Avisos</h3>${notifs.length?notifs.map(n=>`<div class="it">${esc(n.txt)}<small>${ago(n.t)}</small></div>`).join('')+`<div class="it"><button class="lnk" onclick="notifs=[];nOpen=false;render()">Borrar avisos</button></div>`:'<div class="it mut">No hay avisos nuevos.</div>'}</div>`:''}`;
+ const mg=$('#msgs');if(mg)mg.scrollTop=mg.scrollHeight;
+}
+
+function addRobo(){
+ if(!me.mafiaId)return toast('Necesitas una mafia.');
+ const amt=Math.max(0,Math.round(Number($('#ra').value)||0)),desc=$('#rd').value.trim().slice(0,140),tipo=$('#rt').value,ok=$('#rr').value==='1';
+ if(!desc)return toast('Añade una descripción.');
+ const r={id:uid(),userId:me.id,mafiaId:me.mafiaId,tipo,desc,amount:amt,success:ok,laundered:false,cleanAmount:0,t:Date.now()};
+ db.robos.push(r);addLog(me.mafiaId,me.id,'robo',`${tipo}: ${desc} (${ok?'ÉXITO '+money(amt):'FALLIDO'})`,ok?PT().ok:PT().fail,r.id);save();render();
+}
+function launderOne(r){
+ const fee=Number(db.settings.fee)||0,clean=Math.round(r.amount*(1-fee/100));
+ r.laundered=true;r.cleanAmount=clean;r.lt=Date.now();
+ addLog(r.mafiaId,me.id,'blanqueo',`Blanqueo de ${money(r.amount)} → ${money(clean)} limpio (comisión ${fee}%)`,PT().l+Math.floor(r.amount/5000),r.id);
+}
+function launder(id){
+ const r=db.robos.find(x=>x.id===id);if(!r||!r.success||r.laundered)return;
+ if(!(isAdmin()||r.userId===me.id))return;
+ launderOne(r);save();render();
+}
+function launderAll(){
+ const l=db.robos.filter(r=>r.success&&!r.laundered&&(isAdmin()?r.mafiaId===me.mafiaId||!me.mafiaId:r.userId===me.id));
+ if(!l.length)return toast('No tienes nada pendiente.');
+ l.forEach(launderOne);save();render();toast(l.length+' robo(s) blanqueado(s).');
+}
+function delRobo(id){ask('¿Eliminar este robo y sus puntos?',()=>{db.robos=db.robos.filter(r=>r.id!==id);db.log=db.log.filter(l=>l.roboId!==id);save();render()})}
+function roboTable(list,admin){
+ if(!list.length)return'<p class="mut">No hay robos registrados.</p>';
+ return`<div class="tw"><table><tr><th>Fecha</th><th>Mafia</th><th>Miembro</th><th>Tipo</th><th>Descripción</th><th>Botín</th><th>Resultado</th><th>Blanqueo</th><th></th></tr>${[...list].sort((a,b)=>b.t-a.t).map(r=>`<tr><td>${fdate(r.t)}</td><td>${mbadge(r.mafiaId)}</td><td>${esc(uname(r.userId))}</td><td>${esc(r.tipo)}</td><td>${esc(r.desc)}</td><td>${money(r.amount)}</td><td class="${r.success?'ok':'bad'}">${r.success?'Éxito':'Fallido'}</td>
+ <td>${!r.success?'<span class="mut">No aplicable</span>':r.laundered?`<span class="ok">Limpio ${money(r.cleanAmount)}</span>`:(isAdmin()||r.userId===me.id)?`<button class="btn s ok" onclick="launder('${r.id}')">Blanquear</button>`:'<span class="mut">Pendiente</span>'}</td>
+ <td>${admin?`<button class="btn s d" onclick="delRobo('${r.id}')">Eliminar</button>`:''}</td></tr>`).join('')}</table></div>`;
+}
+function setRF(k,v){rFilter[k]=v;render()}
+function pRobos(){
+ let list=isAdmin()?db.robos:db.robos.filter(r=>r.mafiaId===me.mafiaId);
+ if(rFilter.tipo)list=list.filter(r=>r.tipo===rFilter.tipo);
+ if(rFilter.res)list=list.filter(r=>String(r.success)===rFilter.res);
+ if(isAdmin()&&rFilter.mafia)list=list.filter(r=>r.mafiaId===rFilter.mafia);
+ return`<div class="card"><h2>Registrar robo</h2><div class="row"><div><label for="rt">Tipo</label><select id="rt">${TIPOS.map(t=>`<option>${t}</option>`).join('')}</select></div>
+ <div><label for="ra">Botín (€)</label><input id="ra" type="number" min="0" value="0"></div><div><label for="rr">Resultado</label><select id="rr"><option value="1">Éxito</option><option value="0">Fallido</option></select></div></div>
+ <label for="rd">Descripción</label><input id="rd" maxlength="140" placeholder="Ej: Gasolinera de Vallecas, 3 miembros"><br><br><button class="btn" onclick="addRobo()">Registrar robo</button>
+ <p class="hint">Éxito ${PT().ok>=0?'+':''}${PT().ok} pts · Fallo ${PT().fail} pts. Solo los robos exitosos se pueden blanquear (comisión ${Number(db.settings.fee)||0}%).</p></div>
+ <div class="card"><h2>Robos ${isAdmin()?'(todas las mafias)':'de tu mafia'}</h2>
+ <div class="row" style="margin-bottom:.7rem"><div><label for="ft">Tipo</label><select id="ft" onchange="setRF('tipo',this.value)"><option value="">Todos</option>${TIPOS.map(t=>`<option ${rFilter.tipo===t?'selected':''}>${t}</option>`).join('')}</select></div>
+ <div><label for="fr">Resultado</label><select id="fr" onchange="setRF('res',this.value)"><option value="">Todos</option><option value="true" ${rFilter.res==='true'?'selected':''}>Éxito</option><option value="false" ${rFilter.res==='false'?'selected':''}>Fallido</option></select></div>
+ ${isAdmin()?`<div><label for="fm">Mafia</label><select id="fm" onchange="setRF('mafia',this.value)"><option value="">Todas</option>${db.mafias.map(m=>`<option value="${esc(m.id)}" ${rFilter.mafia===m.id?'selected':''}>${esc(m.name)}</option>`).join('')}</select></div>`:''}</div>
+ ${roboTable(list,isAdmin())}</div>`;
+}
+function pBlanqueo(){
+ const mine=db.robos.filter(r=>r.success&&(isAdmin()||r.mafiaId===me.mafiaId));
+ const pend=mine.filter(r=>!r.laundered),done=mine.filter(r=>r.laundered);
+ return`<div class="card"><h2>💸 Blanqueo de dinero</h2><p class="mut">Pendiente: ${money(pend.reduce((a,r)=>a+r.amount,0))} · Blanqueado limpio: ${money(done.reduce((a,r)=>a+r.cleanAmount,0))} · Comisión ${Number(db.settings.fee)||0}%</p>
+ <button class="btn ok" onclick="launderAll()">Blanquear todo lo mío pendiente</button></div>
+ <div class="card"><h3>Pendientes</h3>${roboTable(pend,false)}</div><div class="card"><h3>Blanqueados</h3>${roboTable(done,false)}</div>`;
+}
+
+/* ---------- Imágenes (Supabase Storage) ---------- */
+function compressBlob(file,max){
+ return new Promise((res,rej)=>{
+  const fr=new FileReader();fr.onerror=()=>rej({message:'No se pudo leer la imagen.'});
+  fr.onload=()=>{const im=new Image();im.onerror=()=>rej({message:'Imagen no válida.'});
+   im.onload=()=>{const k=Math.min(1,max/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext('2d').drawImage(im,0,0,c.width,c.height);c.toBlob(b=>b?res(b):rej({message:'No se pudo procesar la imagen.'}),'image/jpeg',.78)};
+   im.src=fr.result};
+  fr.readAsDataURL(file);
+ });
+}
+async function uploadImg(file){
+ const blob=await compressBlob(file,1024),path=me.id+'/'+uid()+'.jpg';
+ const{error}=await sb.storage.from('fotos').upload(path,blob,{contentType:'image/jpeg'});if(error)throw error;
+ return sb.storage.from('fotos').getPublicUrl(path).data.publicUrl;
+}
+function removeImg(url){
+ const i=String(url||'').indexOf('/fotos/');if(i<0)return;
+ sb.storage.from('fotos').remove([decodeURIComponent(url.slice(i+7).split('?')[0])]).catch(()=>{});
+}
+function pickImg(e){const f=e.target.files[0];pendFile=f||null;const p=$('#prev');if(p)p.innerHTML=f?`<img src="${URL.createObjectURL(f)}" style="max-width:200px;border-radius:8px;margin-top:.5rem" alt="vista previa">`:''}
+async function imgFromForm(urlId){
+ if(pendFile){toast('Subiendo imagen…');const u=await uploadImg(pendFile);pendFile=null;return u}
+ const url=($(urlId)?$(urlId).value.trim():'');return/^https?:\/\//i.test(url)?url:'';
+}
+
+/* ---------- Foro ---------- */
+async function addPost(){
+ if(!me.mafiaId&&!isAdmin())return toast('Necesitas una mafia.');
+ try{
+  const img=await imgFromForm('#pu');if(!img)return toast('Sube una foto o pega una URL de imagen.');
+  db.posts.push({id:uid(),userId:me.id,mafiaId:me.mafiaId,img,msg:$('#pm').value.trim().slice(0,140),t:Date.now()});
+  save();render();
+ }catch(e){toast(friendly(e))}
+}
+function delPost(id){ask('¿Eliminar publicación?',()=>{const p=db.posts.find(x=>x.id===id);if(p)removeImg(p.img);db.posts=db.posts.filter(x=>x.id!==id);db.comments=db.comments.filter(c=>c.postId!==id);db.react=db.react.filter(r=>r.postId!==id);save();render()})}
+function reactToggle(pid,i){
+ const id=pid+'_'+me.id+'_'+i,ex=db.react.find(r=>r.id===id);
+ if(ex)db.react=db.react.filter(r=>r.id!==id);else db.react.push({id,postId:pid,userId:me.id,e:i,t:Date.now()});
+ save();render();
+}
+function addComment(pid){
+ const el=$('#cm_'+pid),t=el?el.value.trim().slice(0,300):'';if(!t)return;
+ db.comments.push({id:uid(),postId:pid,userId:me.id,text:t,t:Date.now()});save();render();
+}
+function delComment(id){db.comments=db.comments.filter(c=>c.id!==id);save();render()}
+function postsGrid(){
+ if(!db.posts.length)return'<p class="mut">Aún no hay publicaciones.</p>';
+ return`<div class="posts">${[...db.posts].sort((a,b)=>b.t-a.t).map(p=>{
+  const cs=db.comments.filter(c=>c.postId===p.id).sort((a,b)=>a.t-b.t);
+  return`<div class="post"><img src="${esc(p.img)}" alt="foto" loading="lazy"><div>${mbadge(p.mafiaId)} <span class="mut">${esc(uname(p.userId))} · ${fdate(p.t)}</span>${p.msg?`<p>${esc(p.msg)}</p>`:''}
+  <div class="chips">${EMOJIS.map((e,i)=>{const n=db.react.filter(r=>r.postId===p.id&&r.e===i).length,mine=db.react.some(r=>r.id===p.id+'_'+me.id+'_'+i);return`<button class="chip ${mine?'on':''}" onclick="reactToggle('${p.id}',${i})">${e} ${n||''}</button>`}).join('')}</div>
+  <div class="cm">${cs.map(c=>`<p><b>${esc(uname(c.userId))}:</b> ${esc(c.text)} ${(isAdmin()||c.userId===me.id)?`<a href="#" class="mut" onclick="delComment('${c.id}');return false">✕</a>`:''}</p>`).join('')}
+  <div class="fx" style="margin-top:.4rem"><input id="cm_${p.id}" maxlength="300" placeholder="Comentar…" aria-label="Comentar" style="flex:1;min-width:120px"><button class="btn s" onclick="addComment('${p.id}')">Enviar</button></div></div>
+  ${(isAdmin()||p.userId===me.id)?`<button class="btn s d" style="margin-top:.5rem" onclick="delPost('${p.id}')">Eliminar</button>`:''}</div></div>`}).join('')}</div>`;
+}
+function pForo(){
+ return`<div class="card"><h2>🕶️ Foro de secuestros</h2><label for="pf">Foto (captura del juego)</label><input id="pf" type="file" accept="image/*" onchange="pickImg(event)"><div id="prev"></div>
+ <label for="pu">…o URL de imagen</label><input id="pu" placeholder="https://..."><label for="pm">Mensaje (opcional)</label><input id="pm" maxlength="140" placeholder="Un mensaje para los secuestrados..."><br><br><button class="btn" onclick="addPost()">Publicar</button></div>
+ <div class="card">${postsGrid()}</div>`;
+}
+
+/* ---------- Mercado negro ---------- */
+async function addMarket(){
+ const t=$('#kt').value.trim().slice(0,80),d=$('#kd').value.trim().slice(0,400);
+ if(!t)return toast('Pon un título al anuncio.');
+ try{
+  const img=await imgFromForm('#ku');
+  db.market.push({id:uid(),userId:me.id,mafiaId:me.mafiaId,title:t,cat:$('#kc').value,price:Math.max(0,Math.round(Number($('#kp').value)||0)),desc:d,img,status:'open',t:Date.now()});
+  save();render();
+ }catch(e){toast(friendly(e))}
+}
+function marketSold(id){const k=db.market.find(x=>x.id===id);if(!k)return;k.status=k.status==='open'?'sold':'open';save();render()}
+function delMarket(id){ask('¿Eliminar este anuncio?',()=>{const k=db.market.find(x=>x.id===id);if(k)removeImg(k.img);db.market=db.market.filter(x=>x.id!==id);save();render()})}
+function interested(id){
+ const k=db.market.find(x=>x.id===id);if(!k||k.userId===me.id)return;
+ db.dm.push({id:uid(),from:me.id,to:k.userId,text:`Hola, me interesa tu anuncio «${k.title}» (${money(k.price)}).`,t:Date.now(),read:false});
+ save();dmWith=k.userId;go('mensajes');toast('Mensaje enviado al vendedor.');
+}
+function setMF(k,v){mFilter[k]=v;render()}
+function pMercado(){
+ let l=[...db.market].sort((a,b)=>b.t-a.t);
+ if(mFilter.cat)l=l.filter(k=>k.cat===mFilter.cat);
+ if(mFilter.open)l=l.filter(k=>k.status==='open');
+ return`<div class="card"><h2>🕶️ Mercado negro</h2><p class="mut">Compra y venta entre miembros dentro del rol. Pulsa «Me interesa» para escribir al vendedor.</p>
+ <div class="row"><div><label for="kt">Título</label><input id="kt" maxlength="80" placeholder="Ej: Sultan RS modificado"></div><div><label for="kc">Categoría</label><select id="kc">${CATS.map(c=>`<option>${c}</option>`).join('')}</select></div><div><label for="kp">Precio (€)</label><input id="kp" type="number" min="0" value="0"></div></div>
+ <label for="kd">Descripción</label><textarea id="kd" maxlength="400" placeholder="Estado, condiciones, dónde quedar…"></textarea>
+ <label for="pf">Foto (opcional)</label><input id="pf" type="file" accept="image/*" onchange="pickImg(event)"><div id="prev"></div>
+ <label for="ku">…o URL de imagen</label><input id="ku" placeholder="https://..."><br><button class="btn" onclick="addMarket()">Publicar anuncio</button></div>
+ <div class="card"><div class="row" style="margin-bottom:.8rem"><div><label for="mfc">Categoría</label><select id="mfc" onchange="setMF('cat',this.value)"><option value="">Todas</option>${CATS.map(c=>`<option ${mFilter.cat===c?'selected':''}>${c}</option>`).join('')}</select></div>
+ <div><label for="mfo">Mostrar</label><select id="mfo" onchange="setMF('open',this.value==='1')"><option value="1" ${mFilter.open?'selected':''}>Solo disponibles</option><option value="0" ${!mFilter.open?'selected':''}>Todos</option></select></div></div>
+ ${l.length?`<div class="posts">${l.map(k=>`<div class="item ${k.status==='sold'?'sold':''}"><div><b>${esc(k.title)}</b> ${k.status==='sold'?'<span class="badge bad" style="border-color:var(--bad)">VENDIDO</span>':''}</div>
+ ${k.img?`<img src="${esc(k.img)}" alt="" loading="lazy">`:''}<div class="price">${money(k.price)}</div><div class="mut">${esc(k.cat)} · ${esc(uname(k.userId))} ${mbadge(k.mafiaId)}</div>${k.desc?`<div>${esc(k.desc)}</div>`:''}
+ <div class="fx">${k.userId!==me.id&&k.status==='open'?`<button class="btn s" onclick="interested('${k.id}')">Me interesa</button>`:''}${k.userId===me.id?`<button class="btn s g" onclick="marketSold('${k.id}')">${k.status==='open'?'Marcar vendido':'Reabrir'}</button>`:''}${(isAdmin()||k.userId===me.id)?`<button class="btn s d" onclick="delMarket('${k.id}')">Eliminar</button>`:''}</div></div>`).join('')}</div>`:'<p class="mut">No hay anuncios con estos filtros.</p>'}</div>`;
+}
+
+/* ---------- Misiones ---------- */
+function reportMission(id){
+ const m=db.missions.find(x=>x.id===id);if(!m||!me.mafiaId)return;
+ if(db.mission_done.some(d=>d.missionId===id&&d.userId===me.id&&d.status==='pending'))return toast('Ya la has reportado, espera al admin.');
+ const note=($('#mn_'+id)?$('#mn_'+id).value.trim():'').slice(0,200);
+ db.mission_done.push({id:uid(),missionId:id,userId:me.id,mafiaId:me.mafiaId,note,status:'pending',t:Date.now()});
+ save();render();toast('Misión reportada. El admin la revisará.');
+}
+function pMisiones(){
+ const l=db.missions.filter(x=>x.status==='open'&&(isAdmin()||!x.mafiaId||x.mafiaId===me.mafiaId)).sort((a,b)=>b.t-a.t);
+ const mine=db.mission_done.filter(d=>d.userId===me.id);
+ return`<div class="card"><h2>🎯 Misiones</h2>${l.length?l.map(m=>{const st=mine.filter(d=>d.missionId===m.id).sort((a,b)=>b.t-a.t)[0];
+  return`<div class="item" style="margin-bottom:.7rem"><div><b>${esc(m.title)}</b> <span class="ok">+${num(m.reward,0)} pts</span> ${m.mafiaId?mbadge(m.mafiaId):'<span class="badge mut">Para todos</span>'}</div><div>${esc(m.desc)}</div>
+  ${st?`<div class="mut">Tu último reporte: ${st.status==='pending'?'⏳ pendiente':st.status==='approved'?'✅ aprobado':'❌ rechazado'}</div>`:''}
+  ${me.mafiaId?`<div class="fx"><input id="mn_${m.id}" placeholder="Nota (opcional)" maxlength="200" aria-label="Nota" style="flex:1;min-width:140px"><button class="btn s" onclick="reportMission('${m.id}')">Reportar cumplida</button></div>`:''}</div>`}).join(''):'<p class="mut">No hay misiones disponibles ahora mismo.</p>'}</div>`;
+}
+
+/* ---------- Mensajes ---------- */
+const unread=()=>me?db.dm.filter(d=>d.to===me.id&&!d.read).length:0;
+function markRead(from){let ch=false;db.dm.forEach(d=>{if(d.to===me.id&&d.from===from&&!d.read){d.read=true;ch=true}});if(ch)save()}
+function openThread(v){dmWith=v;if(v)markRead(v);render()}
+function sendDm(){
+ const el=$('#dmt'),t=el?el.value.trim().slice(0,500):'';if(!t||!dmWith)return;
+ db.dm.push({id:uid(),from:me.id,to:dmWith,text:t,t:Date.now(),read:false});save();render();
+}
+function delDm(id){db.dm=db.dm.filter(d=>d.id!==id);save();render()}
+function pMensajes(){
+ const others=db.users.filter(u=>u.id!==me.id).sort((a,b)=>a.username.localeCompare(b.username));
+ const un=u=>db.dm.filter(d=>d.from===u.id&&d.to===me.id&&!d.read).length;
+ const th=dmWith?db.dm.filter(d=>(d.from===me.id&&d.to===dmWith)||(d.from===dmWith&&d.to===me.id)).sort((a,b)=>a.t-b.t):[];
+ return`<div class="card"><h2>✉️ Mensajes privados</h2><label for="dmw">Conversación con</label>
+ <select id="dmw" onchange="openThread(this.value)"><option value="">— elige a alguien —</option>${others.map(u=>`<option value="${u.id}" ${dmWith===u.id?'selected':''}>${esc(u.username)}${un(u)?' ('+un(u)+' nuevos)':''}</option>`).join('')}</select>
+ ${dmWith?`<div class="msgs" id="msgs" style="margin-top:.7rem">${th.length?th.map(d=>`<div class="msg ${d.from===me.id?'me':''}"><small>${esc(uname(d.from))} · ${fdate(d.t)} ${d.from===me.id?(d.read?'· leído':''):''} <a href="#" class="mut" onclick="delDm('${d.id}');return false">✕</a></small>${esc(d.text)}</div>`).join(''):'<p class="mut">Aún no hay mensajes. Escribe el primero.</p>'}</div>
+ <div class="fx"><input id="dmt" maxlength="500" placeholder="Escribe un mensaje…" aria-label="Mensaje" style="flex:1;min-width:160px" onkeydown="if(event.key==='Enter')sendDm()"><button class="btn" onclick="sendDm()">Enviar</button></div>`:''}
+ <p class="hint">Solo tú y la otra persona veis esta conversación.</p></div>`;
+}
+
+/* ---------- Progreso ---------- */
+function pProgreso(){
+ const RK=getRanks();
+ const rows=db.mafias.map(m=>({m,s:stats(m.id)})).sort((a,b)=>b.s.pts-a.s.pts);
+ const bars=({m,s},i)=>{const rk=rankOf(s.pts),nx=RK.find(r=>r.p>s.pts),pct=nx?Math.min(100,(s.pts-rk.p)/(nx.p-rk.p)*100):100;
+  return`<tr><td>#${i+1}</td><td>${mbadge(m.id)}</td><td><b>${esc(rk.n)}</b></td><td style="min-width:150px"><div class="bar"><i style="width:${Math.max(0,pct)}%"></i></div><small class="mut">${s.pts} pts${nx?' / '+nx.p+' → '+esc(nx.n):' (máx.)'}</small></td><td class="ok">${s.ok}</td><td class="bad">${s.fail}</td><td>${money(s.laund)}</td></tr>`};
+ const top=db.users.map(u=>({u,p:upts(u.id)})).filter(x=>x.p!==0).sort((a,b)=>b.p-a.p).slice(0,10);
+ const scope=isAdmin()?db.robos:db.robos.filter(r=>r.mafiaId===me.mafiaId);
+ const by={};scope.filter(r=>r.success).forEach(r=>{by[r.tipo]=(by[r.tipo]||0)+r.amount});
+ const ent=Object.entries(by).sort((a,b)=>b[1]-a[1]),mx=ent.length?ent[0][1]||1:1;
+ const lg=[...db.log].filter(l=>isAdmin()||l.mafiaId===me.mafiaId).sort((a,b)=>b.t-a.t).slice(0,40);
+ return`<div class="card"><h2>🏆 Ranking y progreso de mafias</h2><div class="tw"><table><tr><th>Pos</th><th>Mafia</th><th>Rango</th><th>Progreso</th><th>Éxitos</th><th>Fallos</th><th>Blanqueado</th></tr>${rows.map(bars).join('')}</table></div>
+ <p class="hint">Éxito ${PT().ok>=0?'+':''}${PT().ok} · fallo ${PT().fail} · blanqueo +${PT().l} (+1 cada 5.000 €) · ajustes y misiones del admin.</p></div>
+ <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(300px,1fr))"><div class="card"><h3>Mejores miembros</h3>${top.length?`<table>${top.map((x,i)=>`<tr><td>#${i+1}</td><td>${esc(x.u.username)}</td><td>${mbadge(x.u.mafiaId)}</td><td class="${x.p>=0?'ok':'bad'}">${x.p} pts</td></tr>`).join('')}</table>`:'<p class="mut">Todavía no hay puntos.</p>'}</div>
+ <div class="card"><h3>Botín por tipo de robo</h3>${ent.length?ent.map(([k,v])=>`<div class="hbar"><span>${esc(k)}</span><div class="bar"><i style="width:${Math.round(v/mx*100)}%"></i></div><span>${money(v)}</span></div>`).join(''):'<p class="mut">Sin robos exitosos todavía.</p>'}</div></div>
+ <div class="card"><h3>Historial de progreso</h3>${logTable(lg)}</div>`;
+}
+async function chgPass(){
+ const p=$('#np').value;if(p.length<6)return toast('Mínimo 6 caracteres.');
+ const{error}=await sb.auth.updateUser({password:p});if(error)return toast(friendly(error));
+ toast('Contraseña actualizada.');$('#np').value='';
+}
+function pPerfil(){
+ const mine=db.robos.filter(r=>r.userId===me.id);
+ return`<div class="card" style="max-width:480px"><h2>Mi perfil</h2><p>Usuario: <b>${esc(me.username)}</b> · ${mbadge(me.mafiaId)} · ${isAdmin()?'Administrador':'Miembro'}</p>
+ <p class="mut">Mis puntos: <b>${upts(me.id)}</b> · Robos registrados: <b>${mine.length}</b> · Alta: ${fdate(me.created)}</p>
+ <label for="np">Nueva contraseña</label><input id="np" type="password" autocomplete="new-password"><br><br><button class="btn" onclick="chgPass()">Cambiar contraseña</button></div>`;
+}
+
+/* ---------- Administración ---------- */
+function saveAd(){
+ const u=$('#adu').value.trim();if(u&&!/^https:\/\//i.test(u))return toast('El enlace debe empezar por https://');
+ Object.assign(db.settings,{adUrl:u,adTitle:$('#adt').value.trim(),adText:$('#adx').value.trim()});save();toast('Anuncio guardado.');render();
+}
+function clearAd(){Object.assign(db.settings,{adUrl:'',adText:''});save();render()}
+function addNews(){const t=$('#nt').value.trim().slice(0,100),x=$('#nx').value.trim().slice(0,600);if(!t||!x)return toast('Escribe título y texto.');db.news.push({id:uid(),title:t,text:x,t:Date.now()});save();render();toast('Noticia publicada.')}
+function delNews(id){db.news=db.news.filter(n=>n.id!==id);save();render()}
+function addMafia(){const n=$('#mn').value.trim();if(!n)return;db.mafias.push({id:uid(),name:n,color:$('#mc').value,ord:Date.now()});save();render()}
+function delMafia(id){ask('¿Eliminar mafia con sus robos, publicaciones y progreso? Sus miembros quedarán sin mafia.',async()=>{
+ db.mafias=db.mafias.filter(m=>m.id!==id);db.robos=db.robos.filter(r=>r.mafiaId!==id);db.posts=db.posts.filter(p=>p.mafiaId!==id);db.log=db.log.filter(l=>l.mafiaId!==id);
+ save();await sb.from('profiles').update({mafia_id:''}).eq('mafia_id',id);await loadAll(true)})}
+function adjPts(id){const v=parseInt($('#pj'+id).value);if(!v)return;addLog(id,me.id,'ajuste',`Ajuste manual del admin (${v>0?'+':''}${v})`,v);save();render()}
+function addMission(){
+ const t=$('#mt').value.trim().slice(0,100),d=$('#md').value.trim().slice(0,400);if(!t)return toast('Pon un título.');
+ db.missions.push({id:uid(),title:t,desc:d,reward:num($('#mr').value,10),mafiaId:$('#mm').value,status:'open',t:Date.now()});save();render();toast('Misión creada.');
+}
+function closeMission(id){const m=db.missions.find(x=>x.id===id);if(m){m.status=m.status==='open'?'closed':'open';save();render()}}
+function delMission(id){db.missions=db.missions.filter(m=>m.id!==id);db.mission_done=db.mission_done.filter(d=>d.missionId!==id);save();render()}
+function reviewMission(id,ok){
+ const d=db.mission_done.find(x=>x.id===id);if(!d||d.status!=='pending')return;
+ d.status=ok?'approved':'rejected';
+ if(ok){const m=db.missions.find(x=>x.id===d.missionId);addLog(d.mafiaId,d.userId,'mision',`Misión «${m?m.title:'?'}» cumplida`,m?num(m.reward,0):0)}
+ save();render();
+}
+async function userAct(fn,msg){const{error}=await fn();if(error)toast(friendly(error));else if(msg)toast(msg);await loadAll(true)}
+function setUserMafia(id,v){userAct(()=>sb.from('profiles').update({mafia_id:v}).eq('id',id),'Mafia actualizada.')}
+function toggleRole(id){const u=db.users.find(x=>x.id===id);userAct(()=>sb.from('profiles').update({role:u.role==='admin'?'member':'admin'}).eq('id',id),'Rol actualizado.')}
+function delUser(id){ask('¿Eliminar este perfil? El usuario perderá el acceso a la web.',()=>userAct(()=>sb.rpc('admin_delete_user',{uid:id}),'Usuario eliminado.'))}
+function resetPass(id){ask('Nueva contraseña para este usuario:',p=>{if(!p||p.length<6)return toast('Mínimo 6 caracteres.');userAct(()=>sb.rpc('admin_set_password',{uid:id,pw:p}),'Contraseña cambiada.')},true)}
+function filterUsers(v){v=v.toLowerCase();document.querySelectorAll('#utb tr[data-n]').forEach(r=>{r.style.display=r.dataset.n.includes(v)?'':'none'})}
+function saveCfg(){
+ const s=db.settings;
+ s.fee=Math.min(100,Math.max(0,num($('#fee').value,15)));s.ptsOk=num($('#pok').value,10);s.ptsFail=num($('#pfl').value,-5);s.ptsLaunder=num($('#pla').value,5);
+ const rk=$('#rks').value.split('\n').map(l=>l.trim()).filter(Boolean).map(l=>{const i=l.lastIndexOf(':');return{n:l.slice(0,i).trim(),p:num(l.slice(i+1),NaN)}});
+ if(!rk.length||rk.some(r=>!r.n||!Number.isFinite(r.p)))return toast('Rangos: una línea por rango con el formato Nombre:puntos');
+ s.ranks=rk;save();toast('Ajustes guardados.');render();
+}
+function expJSON(){dl('madrid_mafias_datos.json',JSON.stringify({users:db.users,...Object.fromEntries(DOCS.filter(c=>c!=='dm').map(c=>[c,db[c]])),settings:db.settings},null,1),'application/json')}
+function expCSV(){
+ const q=v=>'"'+String(v??'').replace(/"/g,'""')+'"';
+ let c='Fecha,Mafia,Miembro,Evento,Descripcion,Puntos\n';
+ [...db.log].sort((a,b)=>a.t-b.t).forEach(l=>{const m=mafia(l.mafiaId);c+=[fdate(l.t),m?m.name:'',l.userId?uname(l.userId):'',l.type,l.desc,l.pts].map(q).join(',')+'\n'});
+ c+='\nRESUMEN\nMafia,Rango,Puntos,Exitos,Fallos,Blanqueado\n';
+ db.mafias.forEach(m=>{const s=stats(m.id);c+=[m.name,rankOf(s.pts).n,s.pts,s.ok,s.fail,s.laund].map(q).join(',')+'\n'});
+ dl('progreso_mafias.csv','﻿'+c,'text/csv');
+}
+function pUsuarios(){
+ const on=db.users.filter(u=>Date.now()-(u.lastSeen||0)<300000).length;
+ const per=db.mafias.map(m=>`<div class="stat"><small>${esc(m.name)}</small><b>${db.users.filter(u=>u.mafiaId===m.id).length}</b></div>`).join('');
+ return`<div class="sum"><div class="stat"><small>Miembros registrados</small><b>${db.users.length}</b></div><div class="stat"><small>Conectados (5 min)</small><b class="ok">${on}</b></div>${per}<div class="stat"><small>Sin mafia</small><b>${db.users.filter(u=>!mafia(u.mafiaId)).length}</b></div></div>
+ <div class="card"><div class="fx" style="justify-content:space-between;margin-bottom:.6rem"><h2 style="margin:0">Miembros registrados</h2><input id="usq" placeholder="Buscar usuario…" aria-label="Buscar usuario" oninput="filterUsers(this.value)" style="max-width:220px"></div>
+ <div class="tw"><table><thead><tr><th>Usuario</th><th>Rol</th><th>Mafia</th><th>Puntos</th><th>Alta</th><th>Última conexión</th><th>Acciones</th></tr></thead><tbody id="utb">${[...db.users].sort((a,b)=>(b.lastSeen||0)-(a.lastSeen||0)).map(u=>{const o=Date.now()-(u.lastSeen||0)<300000;return`<tr data-n="${esc(u.username.toLowerCase())}"><td><span class="dot ${o?'':'off'}"></span>${esc(u.username)}${u.id===me.id?' <span class="mut">(tú)</span>':''}</td><td>${u.role==='admin'?'Admin':'Miembro'}</td><td><select aria-label="Mafia de ${esc(u.username)}" onchange="setUserMafia('${u.id}',this.value)"><option value="">Sin mafia</option>${db.mafias.map(m=>`<option value="${esc(m.id)}" ${u.mafiaId===m.id?'selected':''}>${esc(m.name)}</option>`).join('')}</select></td><td>${upts(u.id)}</td><td>${fdate(u.created)}</td><td>${ago(u.lastSeen)}</td><td><div class="fx">${u.id===me.id?'':`<button class="btn s g" onclick="toggleRole('${u.id}')">${u.role==='admin'?'Quitar admin':'Hacer admin'}</button>`}<button class="btn s g" onclick="resetPass('${u.id}')">Contraseña</button>${u.id===me.id?'':`<button class="btn s d" onclick="delUser('${u.id}')">Eliminar</button>`}</div></td></tr>`}).join('')}</tbody></table></div>
+ <p class="hint">La lista se actualiza sola cuando alguien se registra o se conecta.</p></div>`;
+}
+function pAdmin(){
+ const T=[['resumen','Resumen'],['noticias','Noticias y anuncio'],['misiones','Misiones'],['mafias','Mafias'],['robos','Robos'],['usuarios','Usuarios'],['foro','Foro'],['mercado','Mercado'],['datos','Ajustes y datos']];
+ let h=`<div class="tabs">${T.map(t=>`<button class="${atab===t[0]?'on':''}" onclick="atab='${t[0]}';render()">${t[1]}${t[0]==='misiones'&&db.mission_done.some(d=>d.status==='pending')?'<span class="badge2">!</span>':''}</button>`).join('')}</div>`;
+ const s=db.settings;
+ if(atab==='resumen'){
+  const on=db.users.filter(online).length,pm=db.mission_done.filter(d=>d.status==='pending').length,day=Date.now()-864e5,rd=db.robos.filter(r=>r.t>day);
+  h+=`<div class="ledger"><div><small>Miembros</small><b>${db.users.length}</b><small>${on} en línea</small></div><div><small>Robos en 24 h</small><b>${rd.length}</b><small>${money(rd.filter(r=>r.success).reduce((a,r)=>a+r.amount,0))} de botín</small></div><div><small>Misiones por revisar</small><b class="${pm?'bad':''}">${pm}</b></div><div><small>Mercado abierto</small><b>${db.market.filter(k=>k.status==='open').length}</b></div></div>
+  <div class="qa"><button onclick="atab='usuarios';render()">${ico('users')}Gestionar usuarios</button><button onclick="atab='noticias';render()">${ico('mail')}Publicar noticia</button><button onclick="atab='misiones';render()">${ico('target')}Crear misión</button><button onclick="atab='mafias';render()">${ico('shield')}Mafias y puntos</button></div>
+  <div class="cols"><div class="card"><h3>Mafias</h3>${[...db.mafias].sort((a,c)=>mpts(c.id)-mpts(a.id)).map(m=>`<div class="mrow"><div class="grow">${mbadge(m.id)}<br><small class="mut">${db.users.filter(u=>u.mafiaId===m.id).length} miembros · ${esc(rankOf(mpts(m.id)).n)}</small></div><b>${mpts(m.id)} pts</b></div>`).join('')}</div>
+  <div class="card"><h3>Últimas conexiones</h3>${[...db.users].sort((a,c)=>(c.lastSeen||0)-(a.lastSeen||0)).slice(0,8).map(u=>`<div class="mrow">${avatar(u)}<div class="grow"><b>${esc(u.username)}</b></div><small class="mut"><span class="dot ${online(u)?'':'off'}"></span>${ago(u.lastSeen)}</small></div>`).join('')}</div></div>`;
+ }
+ if(atab==='noticias')h+=`<div class="card"><h2>Publicar noticia</h2><label for="nt">Título</label><input id="nt" maxlength="100"><label for="nx">Texto</label><textarea id="nx" maxlength="600"></textarea><br><button class="btn" onclick="addNews()">Publicar</button></div>
+ <div class="card"><h3>Noticias publicadas</h3>${db.news.length?[...db.news].sort((a,b)=>b.t-a.t).map(n=>`<div class="cm" style="margin:0 0 .5rem"><b>${esc(n.title)}</b> <span class="mut">${fdate(n.t)}</span> <button class="btn s d" onclick="delNews('${n.id}')">Eliminar</button><p>${esc(n.text)}</p></div>`).join(''):'<p class="mut">Ninguna todavía.</p>'}</div>
+ <div class="card"><h2>Anuncio de la web</h2><label for="adt">Título</label><input id="adt" value="${esc(s.adTitle)}"><label for="adx">Texto (opcional)</label><textarea id="adx">${esc(s.adText)}</textarea>
+ <label for="adu">Enlace de Google (Google Sites publicado, Docs, Slides, Forms…)</label><input id="adu" placeholder="https://sites.google.com/..." value="${esc(s.adUrl)}"><br><div class="fx"><button class="btn" onclick="saveAd()">Guardar anuncio</button><button class="btn g" onclick="clearAd()">Quitar anuncio</button></div></div>`;
+ if(atab==='misiones'){
+  const pend=db.mission_done.filter(d=>d.status==='pending').sort((a,b)=>a.t-b.t);
+  h+=`<div class="card"><h2>Crear misión</h2><div class="row"><div><label for="mt">Título</label><input id="mt" maxlength="100"></div><div><label for="mr">Recompensa (pts)</label><input id="mr" type="number" value="20"></div><div><label for="mm">Para</label><select id="mm"><option value="">Todas las mafias</option>${db.mafias.map(m=>`<option value="${esc(m.id)}">${esc(m.name)}</option>`).join('')}</select></div></div>
+  <label for="md">Descripción</label><textarea id="md" maxlength="400"></textarea><br><button class="btn" onclick="addMission()">Crear misión</button></div>
+  <div class="card"><h3>Reportes pendientes de revisar (${pend.length})</h3>${pend.length?`<div class="tw"><table><tr><th>Fecha</th><th>Miembro</th><th>Mafia</th><th>Misión</th><th>Nota</th><th></th></tr>${pend.map(d=>{const m=db.missions.find(x=>x.id===d.missionId);return`<tr><td>${fdate(d.t)}</td><td>${esc(uname(d.userId))}</td><td>${mbadge(d.mafiaId)}</td><td>${esc(m?m.title:'(borrada)')}</td><td>${esc(d.note)}</td><td><div class="fx"><button class="btn s ok" onclick="reviewMission('${d.id}',true)">Aprobar</button><button class="btn s d" onclick="reviewMission('${d.id}',false)">Rechazar</button></div></td></tr>`}).join('')}</table></div>`:'<p class="mut">No hay reportes pendientes.</p>'}</div>
+  <div class="card"><h3>Misiones</h3>${db.missions.length?[...db.missions].sort((a,b)=>b.t-a.t).map(m=>`<div class="cm" style="margin:0 0 .5rem"><b>${esc(m.title)}</b> · +${num(m.reward,0)} pts · ${m.mafiaId?mbadge(m.mafiaId):'todas'} · ${m.status==='open'?'abierta':'cerrada'} <button class="btn s g" onclick="closeMission('${m.id}')">${m.status==='open'?'Cerrar':'Reabrir'}</button> <button class="btn s d" onclick="delMission('${m.id}')">Eliminar</button><p>${esc(m.desc)}</p></div>`).join(''):'<p class="mut">Ninguna todavía.</p>'}</div>`;
+ }
+ if(atab==='mafias')h+=`<div class="card"><h2>Mafias</h2><div class="tw"><table><tr><th>Mafia</th><th>Miembros</th><th>Puntos</th><th>Ajustar puntos</th><th></th></tr>${db.mafias.map(m=>`<tr><td>${mbadge(m.id)}</td><td>${db.users.filter(u=>u.mafiaId===m.id).length}</td><td>${mpts(m.id)} · ${esc(rankOf(mpts(m.id)).n)}</td><td><div class="fx"><input id="pj${esc(m.id)}" type="number" placeholder="+/-" aria-label="Puntos" style="width:90px"><button class="btn s g" onclick="adjPts('${m.id}')">Aplicar</button></div></td><td><button class="btn s d" onclick="delMafia('${m.id}')">Eliminar</button></td></tr>`).join('')}</table></div></div>
+ <div class="card"><h3>Añadir mafia</h3><div class="row"><div><label for="mn">Nombre</label><input id="mn"></div><div><label for="mc">Color</label><input id="mc" type="color" value="#e11d48" style="height:40px;padding:2px"></div><div><button class="btn" onclick="addMafia()">Añadir</button></div></div></div>`;
+ if(atab==='robos')h+=`<div class="card"><h2>Todos los robos</h2>${roboTable(db.robos,true)}</div>`;
+ if(atab==='usuarios')h+=pUsuarios();
+ if(atab==='foro')h+=`<div class="card"><h2>Moderación del foro</h2>${postsGrid()}</div>`;
+ if(atab==='mercado')h+=`<div class="card"><h2>Moderación del mercado negro</h2>${db.market.length?`<div class="tw"><table><tr><th>Fecha</th><th>Vendedor</th><th>Anuncio</th><th>Precio</th><th>Estado</th><th></th></tr>${[...db.market].sort((a,b)=>b.t-a.t).map(k=>`<tr><td>${fdate(k.t)}</td><td>${esc(uname(k.userId))}</td><td>${esc(k.title)}</td><td>${money(k.price)}</td><td>${k.status==='open'?'Disponible':'Vendido'}</td><td><button class="btn s d" onclick="delMarket('${k.id}')">Eliminar</button></td></tr>`).join('')}</table></div>`:'<p class="mut">Sin anuncios.</p>'}</div>`;
+ if(atab==='datos')h+=`<div class="card"><h2>Ajustes</h2><div class="row"><div><label for="fee">Comisión de blanqueo (%)</label><input id="fee" type="number" min="0" max="100" value="${num(s.fee,15)}"></div><div><label for="pok">Puntos por robo exitoso</label><input id="pok" type="number" value="${num(s.ptsOk,10)}"></div><div><label for="pfl">Puntos por robo fallido</label><input id="pfl" type="number" value="${num(s.ptsFail,-5)}"></div><div><label for="pla">Puntos base por blanqueo</label><input id="pla" type="number" value="${num(s.ptsLaunder,5)}"></div></div>
+ <label for="rks">Rangos (una línea por rango, formato Nombre:puntos)</label><textarea id="rks" rows="6">${esc(getRanks().map(r=>r.n+':'+r.p).join('\n'))}</textarea><br><button class="btn" onclick="saveCfg()">Guardar ajustes</button></div>
+ <div class="card"><h2>Exportar progreso</h2><div class="fx"><button class="btn" onclick="expCSV()">Descargar progreso (CSV)</button><button class="btn g" onclick="expJSON()">Copia completa (JSON)</button></div>
+ <p class="hint">Los datos están en tu proyecto de Supabase y se actualizan en tiempo real para todos los miembros. Usa el CSV o el JSON para llevar el progreso de las mafias a un sitio externo.</p></div>`;
+ return h;
+}
+
+/* ---------- Arranque ---------- */
+async function handleAuth(ev,s){
+ session=s||null;
+ if(ev==='PASSWORD_RECOVERY'){recovering=true;authMode='recover';loaded=true;render();return}
+ if(ev==='TOKEN_REFRESHED')return;
+ if(session){
+  if(loadedFor===session.user.id&&ev!=='SIGNED_IN')return;
+  if(loadedFor===session.user.id&&me)return;
+  loadedFor=session.user.id;
+  await loadAll();
+  if(session&&me){
+   startRealtime();sb.rpc('touch_me');
+   clearInterval(touchT);touchT=setInterval(()=>{if(session)sb.rpc('touch_me')},60000);
+   if(joinMsg){joinMsg=false;if(me.mafiaId){addLog(me.mafiaId,me.id,'ingreso',`${me.username} se une a la mafia`,0);save()}}
+  }
+ }else{
+  loadedFor='';stopRealtime();clearInterval(touchT);recovering=false;if(authMode!=='forgot')authMode='login';
+  await loadAll();
+ }
+}
+function boot(){
+ if(SUPABASE_URL==='PEGA_AQUI'||SUPABASE_KEY==='PEGA_AQUI'){
+  $('#app').innerHTML=`<div class="centerbox"><div class="card"><h2>Falta conectar Supabase</h2><p>Abre <code>index.html</code> con un editor de texto y pega tu <b>Project URL</b> y tu clave <b>anon / publishable</b> donde dice <b>PEGA AQUÍ LOS DOS DATOS</b>. Después vuelve a subirlo.</p></div></div>`;return;
+ }
+ if(!window.supabase){$('#app').innerHTML='<div class="centerbox"><div class="card"><h2>No se pudo cargar Supabase</h2><p class="mut">Comprueba tu conexión a internet y recarga.</p></div></div>';return}
+ sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+ render();
+ sb.auth.onAuthStateChange((ev,s)=>{setTimeout(()=>handleAuth(ev,s),0)});
+ setInterval(()=>{if(me&&!$('#ovl').innerHTML&&page==='admin'&&atab==='usuarios')soft()},30000);
+}
+boot();
+</script>
+</body>
+</html>
