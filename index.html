@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>Madrid Underground RP</title>
+<style>
+:root{color-scheme:dark;--bg:#0b0b10;--card:#15151d;--card2:#1c1c27;--line:#2a2a3a;--tx:#e8e8f0;--mut:#8b8ba0;--ac:#e11d48;--ac2:#f59e0b;--ok:#22c55e;--bad:#ef4444;--warn:#3a2a08}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--tx);font:15px/1.5 system-ui,Segoe UI,Roboto,sans-serif;min-height:100vh;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3{margin:0 0 .6rem}h2{font-size:1.25rem}h3{font-size:1.05rem;color:var(--ac2)}
+a{color:var(--ac2)}
+header{display:flex;flex-wrap:wrap;gap:.6rem;align-items:center;justify-content:space-between;padding:.8rem 0;background:var(--bg);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+.logo{font-weight:800;letter-spacing:.5px}.logo b{color:var(--ac)}
+nav{display:flex;flex-wrap:wrap;gap:.3rem}
+nav button{background:transparent;border:1px solid transparent;color:var(--mut);padding:.45rem .8rem;border-radius:8px;cursor:pointer;font:inherit}
+nav button:hover{color:var(--tx)}nav button.on{background:var(--card2);color:var(--tx);border-color:var(--line)}
+.user{display:flex;gap:.6rem;align-items:center;font-size:.9rem;color:var(--mut);flex-wrap:wrap}
+main{max-width:1150px;margin:0 auto;padding-block:1.2rem}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:1.1rem;margin-bottom:1rem;min-width:0}
+.grid{display:grid;gap:1rem}.g4{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+.stat{background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:.9rem}
+.stat small{color:var(--mut);display:block}.stat b{font-size:1.5rem}
+input,select,textarea{width:100%;background:#0e0e15;color:var(--tx);border:1px solid var(--line);border-radius:8px;padding:.55rem .7rem;font:inherit}
+textarea{resize:vertical;min-height:70px}
+label{display:block;font-size:.8rem;color:var(--mut);margin:.5rem 0 .2rem}
+.row{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.7rem;align-items:end}
+.btn{background:var(--ac);color:#fff;border:0;border-radius:8px;padding:.55rem 1rem;cursor:pointer;font:inherit;font-weight:600;text-decoration:none;display:inline-block}
+.btn:hover{filter:brightness(1.12)}.btn.s{padding:.25rem .6rem;font-size:.8rem}.btn.g{background:var(--card2);border:1px solid var(--line);color:var(--tx)}.btn.ok{background:var(--ok);color:#04130a}.btn.d{background:#7f1d1d}
+:focus-visible{outline:2px solid var(--ac2);outline-offset:2px}
+table{width:100%;border-collapse:collapse;font-size:.88rem}
+th,td{text-align:left;padding:.5rem .45rem;border-bottom:1px solid var(--line);vertical-align:middle}
+th{color:var(--mut);font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.04em}
+.tw{overflow-x:auto}
+.badge{display:inline-block;padding:.1rem .55rem;border-radius:99px;font-size:.75rem;font-weight:700;border:1px solid}
+.ok{color:var(--ok)}.bad{color:var(--bad)}.mut{color:var(--mut)}
+.bar{height:8px;background:#0e0e15;border-radius:9px;overflow:hidden;border:1px solid var(--line)}.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--ac),var(--ac2))}
+.posts{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1rem}
+.post{background:var(--card2);border:1px solid var(--line);border-radius:12px;overflow:hidden;min-width:0}
+.post img{width:100%;height:220px;object-fit:cover;display:block;background:#000}
+.post div{padding:.7rem}
+.post p{margin:.4rem 0;font-weight:600;overflow-wrap:anywhere}
+.tabs{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:1rem}
+.tabs button{background:var(--card2);color:var(--mut);border:1px solid var(--line);padding:.4rem .8rem;border-radius:8px;cursor:pointer;font:inherit}.tabs button.on{color:#fff;background:var(--ac);border-color:var(--ac)}
+.auth{max-width:440px;margin:6vh auto;padding-block:1rem}
+.hint{font-size:.78rem;color:var(--mut);margin-top:.6rem}
+.err{color:var(--bad);font-size:.85rem;min-height:1.2rem;margin-top:.4rem}
+.fx{display:flex;gap:.5rem;flex-wrap:wrap;align-items:center}
+.mask{position:fixed;inset:0;background:#000b;display:grid;place-items:center;z-index:50;padding:16px}
+.dlg{max-width:380px;width:100%;margin:0}
+#toast{position:fixed;left:50%;bottom:16px;transform:translate(-50%,20px);background:var(--card2);color:var(--tx);border:1px solid var(--line);padding:.6rem 1rem;border-radius:10px;opacity:0;pointer-events:none;transition:.2s;z-index:60;max-width:90vw}
+#toast.show{opacity:1;transform:translate(-50%,0)}
+.sum{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.7rem;margin-bottom:1rem}
+.sum .stat b{font-size:1.3rem}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--ok);margin-right:.35rem}
+.dot.off{background:var(--line)}
+code{background:#0e0e15;padding:.1rem .35rem;border-radius:5px}
+</style>
+</head>
+<body>
+<div id="app"></div><div id="ovl"></div><div id="toast"></div>
+
+<script>
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const uid=()=>Math.random().toString(36).slice(2,10)+Date.now().toString(36).slice(-4);
+const money=n=>(Number(n)||0).toLocaleString('es-ES')+' €';
+const fdate=t=>new Date(t).toLocaleString('es-ES',{dateStyle:'short',timeStyle:'short'});
+const ago=t=>{if(!t)return'Nunca';const m=Math.floor((Date.now()-t)/60000);if(m<1)return'Ahora mismo';if(m<60)return'hace '+m+' min';if(m<1440)return'hace '+Math.floor(m/60)+' h';return fdate(t)};
+const ls={get:k=>{try{return localStorage.getItem(k)}catch(e){return null}},set:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}},del:k=>{try{localStorage.removeItem(k)}catch(e){}}};
+const TIPOS=['Coche','Gasolinera','ATM / Cajero','Tienda 24h','Joyería','Banco','Camión de transporte','Casa','Otro'];
+const RANKS=[{n:'Banda emergente',p:0},{n:'Soldados',p:50},{n:'Capos',p:150},{n:'Cártel',p:300},{n:'Imperio',p:600}];
+const DOCS=['mafias','robos','posts','log'];
+const TK='mrp_token';
+let db={users:[],mafias:[],robos:[],posts:[],log:[],settings:{adUrl:'',adTitle:'Anuncio del servidor',adText:'',fee:15}};
+let token=ls.get(TK)||'',me=null,hasUsers=true,loaded=false,bootErr='',page='inicio',atab='anuncio',authMode='login',authErr='',pendingImg='';
+let last={},busy=0,q=Promise.resolve(),loading=false;
+
+function toast(m){const t=$('#toast');t.textContent=m;t.className='show';clearTimeout(toast.t);toast.t=setTimeout(()=>{t.className=''},3500)}
+function ask(msg,fn,inp){
+ const o=$('#ovl');
+ o.innerHTML=`<div class="mask"><div class="card dlg" role="dialog"><p>${esc(msg)}</p>${inp?'<input id="dlgi" type="password" autocomplete="new-password" placeholder="Mínimo 6 caracteres">':''}<div class="fx" style="margin-top:.7rem"><button class="btn" id="dlgok">Aceptar</button><button class="btn g" id="dlgno">Cancelar</button></div></div></div>`;
+ const close=()=>{o.innerHTML=''};
+ $('#dlgno').onclick=close;$('#dlgok').onclick=()=>{const v=inp?$('#dlgi').value:true;close();fn(v)};
+ if(inp)$('#dlgi').focus();
+}
+function dl(name,txt,type){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([txt],{type:type||'text/plain'}));a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),2000)}
+
+/* ---------- Comunicación con el servidor ---------- */
+async function api(a,body){
+ let r,j;
+ try{
+  r=await fetch('api.php',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(Object.assign({a,token},body||{}))});
+  j=await r.json();
+ }catch(e){throw{msg:r&&!r.ok?'Error del servidor ('+r.status+').':'Sin conexión con el servidor.',status:r?r.status:0}}
+ if(!r.ok)throw{msg:j.error||'Error',status:r.status};
+ return j;
+}
+const isAdmin=()=>me&&me.role==='admin';
+function ops(){
+ const adm=isAdmin(),cols=adm?DOCS:['robos','posts','log'];
+ const out=[],seen=new Set();
+ cols.forEach(c=>db[c].forEach(it=>{const k=c+'/'+it.id;seen.add(k);const s=JSON.stringify(it);if(last[k]!==s)out.push([k,s])}));
+ if(adm){const k='settings/main',s=JSON.stringify(Object.assign({id:'main'},db.settings));seen.add(k);if(last[k]!==s)out.push([k,s])}
+ Object.keys(last).forEach(k=>{const c=k.split('/')[0];if((cols.includes(c)||(adm&&c==='settings'))&&!seen.has(k))out.push([k,null])});
+ return out;
+}
+function save(){
+ const o=ops();if(!o.length)return;
+ o.forEach(([k,s])=>{if(s)last[k]=s;else delete last[k]});
+ busy++;
+ q=q.then(()=>api('save',{ops:o.map(([k,s])=>{const i=k.indexOf('/');return{c:k.slice(0,i),id:k.slice(i+1),data:s?JSON.parse(s):null}})}))
+  .then(r=>{if(r.errors)toast(r.errors+' cambio(s) no permitido(s) por el servidor.')})
+  .catch(e=>toast(e.msg))
+  .then(()=>{busy--;if(!busy)refresh(true)});
+}
+function applyData(j){
+ if(j.me){me=j.me;db.users=j.users}
+ db.mafias=j.mafias||[];db.settings=Object.assign({adUrl:'',adTitle:'Anuncio del servidor',adText:'',fee:15},j.settings||{});
+ if(j.me){DOCS.slice(1).forEach(c=>db[c]=j[c]||[])}
+ last={};
+ DOCS.forEach(c=>{if(j.me||c==='mafias')db[c].forEach(it=>{last[c+'/'+it.id]=JSON.stringify(it)})});
+ if(j.me)last['settings/main']=JSON.stringify(Object.assign({id:'main'},db.settings));
+}
+async function refresh(silent){
+ if(busy||loading)return;loading=true;
+ try{
+  const j=await api(token?'sync':'public');
+  if(token)applyData(j);else{applyData(j);hasUsers=j.hasUsers;me=null}
+  bootErr='';
+ }catch(e){
+  if(e.status===401&&token){token='';ls.del(TK);me=null;try{const j=await api('public');applyData(j);hasUsers=j.hasUsers}catch(x){}}
+  else if(!loaded)bootErr=e.msg;else if(!silent)toast(e.msg);
+ }
+ loading=false;loaded=true;
+ if(silent)soft();else render();
+}
+function soft(){
+ if($('#ovl').innerHTML)return;
+ const a=document.activeElement;if(a&&/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName))return;
+ render();
+}
+
+/* ---------- Utilidades de datos ---------- */
+const mafia=id=>db.mafias.find(m=>m.id===id);
+const uname=id=>(db.users.find(u=>u.id===id)||{username:'(eliminado)'}).username;
+const mpts=id=>db.log.filter(l=>l.mafiaId===id).reduce((a,l)=>a+l.pts,0);
+const rankOf=p=>[...RANKS].reverse().find(r=>p>=r.p)||RANKS[0];
+const mbadge=id=>{const m=mafia(id);return m?`<span class="badge" style="color:${esc(m.color)};border-color:${esc(m.color)}">${esc(m.name)}</span>`:'<span class="badge mut">Sin mafia</span>'};
+function addLog(mafiaId,userId,type,desc,pts,roboId){
+ const before=rankOf(mpts(mafiaId));
+ db.log.push({id:uid(),t:Date.now(),mafiaId,userId,type,desc,pts,roboId:roboId||''});
+ const after=rankOf(mpts(mafiaId));
+ if(before.n!==after.n){const up=after.p>before.p;db.log.push({id:uid(),t:Date.now()+1,mafiaId,userId:'',type:up?'ascenso':'descenso',desc:`${before.n} → ${after.n}`,pts:0,roboId:''})}
+}
+function go(p){page=p;render();refresh(true)}
+async function logout(){try{await api('logout')}catch(e){}token='';ls.del(TK);me=null;await refresh()}
+
+/* ---------- Acceso ---------- */
+async function doAuth(){
+ const raw=$('#au').value.trim(),p=$('#ap').value;authErr='';
+ if(!raw||!p){authErr='Rellena todos los campos.';return render()}
+ try{
+  const r=await api(authMode==='login'?'login':'register',{username:raw,password:p,mafiaId:authMode==='register'?$('#am').value:''});
+  token=r.token;ls.set(TK,token);page='inicio';loaded=true;await refresh();
+ }catch(e){authErr=e.msg;render()}
+}
+function renderAuth(){
+ const reg=authMode==='register';
+ $('#app').innerHTML=`<div class="auth"><div class="card"><h1 class="logo" style="font-size:1.6rem">MADRID <b>UNDERGROUND</b></h1><p class="mut">Panel de mafias · Servidor de rol de Madrid</p>
+ <div class="tabs"><button class="${!reg?'on':''}" onclick="authMode='login';authErr='';render()">Entrar</button><button class="${reg?'on':''}" onclick="authMode='register';authErr='';render()">Registrarse</button></div>
+ <label for="au">Usuario</label><input id="au" autocomplete="username" onkeydown="if(event.key==='Enter')doAuth()">
+ <label for="ap">Contraseña</label><input id="ap" type="password" autocomplete="${reg?'new-password':'current-password'}" onkeydown="if(event.key==='Enter')doAuth()">
+ ${reg?`<label for="am">Mafia</label><select id="am">${db.mafias.map(m=>`<option value="${esc(m.id)}">${esc(m.name)}</option>`).join('')}</select>`:''}
+ <div class="err">${esc(authErr)}</div><button class="btn" style="width:100%;margin-top:.4rem" onclick="doAuth()">${reg?'Crear cuenta':'Entrar'}</button>
+ ${reg&&!hasUsers?'<p class="hint">Todavía no hay usuarios: la primera cuenta que se cree será la del administrador.</p>':''}
+ <p class="hint">Contenido de rol / ficción dentro del servidor.</p></div></div>`;
+}
+
+/* ---------- Páginas ---------- */
+function stats(mid){
+ const r=db.robos.filter(x=>x.mafiaId===mid),ok=r.filter(x=>x.success);
+ return{n:r.length,ok:ok.length,fail:r.length-ok.length,total:ok.reduce((a,x)=>a+x.amount,0),laund:r.filter(x=>x.laundered).reduce((a,x)=>a+x.cleanAmount,0),pts:mpts(mid)};
+}
+function adCard(){
+ const s=db.settings;if(!s.adUrl&&!s.adText)return'';
+ return`<div class="card"><h3>📢 ${esc(s.adTitle||'Anuncio')}</h3>${s.adText?`<p>${esc(s.adText)}</p>`:''}${s.adUrl?`<iframe src="${esc(s.adUrl)}" loading="lazy" referrerpolicy="no-referrer" style="width:100%;height:380px;border:1px solid var(--line);border-radius:10px;background:#fff"></iframe><p class="hint"><a href="${esc(s.adUrl)}" target="_blank" rel="noopener">Abrir anuncio en una pestaña nueva ↗</a></p>`:''}</div>`;
+}
+function pInicio(){
+ const m=mafia(me.mafiaId);let h=adCard();
+ if(m){const s=stats(m.id),rk=rankOf(s.pts);
+  h+=`<div class="card"><h2>${mbadge(m.id)} · Rango: ${esc(rk.n)}</h2><div class="grid g4">
+  <div class="stat"><small>Puntos</small><b>${s.pts}</b></div><div class="stat"><small>Robos exitosos</small><b class="ok">${s.ok}</b></div>
+  <div class="stat"><small>Fallidos</small><b class="bad">${s.fail}</b></div><div class="stat"><small>Botín</small><b>${money(s.total)}</b></div>
+  <div class="stat"><small>Dinero blanqueado</small><b>${money(s.laund)}</b></div></div></div>`;
+ }else h+=`<div class="card"><p class="mut">No perteneces a ninguna mafia. Pide al admin que te asigne una.</p></div>`;
+ const rec=[...db.log].filter(l=>!m||l.mafiaId===m.id).sort((a,b)=>b.t-a.t).slice(0,8);
+ h+=`<div class="card"><h3>Actividad reciente</h3>${logTable(rec)}</div>`;return h;
+}
+function logTable(a){
+ if(!a.length)return'<p class="mut">Sin actividad todavía.</p>';
+ return`<div class="tw"><table><tr><th>Fecha</th><th>Mafia</th><th>Miembro</th><th>Evento</th><th>Pts</th></tr>${a.map(l=>`<tr><td>${fdate(l.t)}</td><td>${mbadge(l.mafiaId)}</td><td>${esc(l.userId?uname(l.userId):'—')}</td><td>${l.type==='ascenso'?'⬆️ ASCENSO: ':l.type==='descenso'?'⬇️ DESCENSO: ':''}${esc(l.desc)}</td><td class="${l.pts>0?'ok':l.pts<0?'bad':'mut'}">${l.pts>0?'+':''}${l.pts}</td></tr>`).join('')}</table></div>`;
+}
+function addRobo(){
+ if(!me.mafiaId)return toast('Necesitas una mafia.');
+ const amt=Math.max(0,Math.round(Number($('#ra').value)||0)),desc=$('#rd').value.trim().slice(0,140),tipo=$('#rt').value,ok=$('#rr').value==='1';
+ if(!desc)return toast('Añade una descripción.');
+ const r={id:uid(),userId:me.id,mafiaId:me.mafiaId,tipo,desc,amount:amt,success:ok,laundered:false,cleanAmount:0,t:Date.now()};
+ db.robos.push(r);addLog(me.mafiaId,me.id,'robo',`${tipo}: ${desc} (${ok?'ÉXITO '+money(amt):'FALLIDO'})`,ok?10:-5,r.id);save();render();
+}
+function launder(id){
+ const r=db.robos.find(x=>x.id===id);if(!r||!r.success||r.laundered)return;
+ if(!(isAdmin()||r.userId===me.id))return;
+ const fee=Number(db.settings.fee)||0,clean=Math.round(r.amount*(1-fee/100));
+ r.laundered=true;r.cleanAmount=clean;r.lt=Date.now();
+ addLog(r.mafiaId,me.id,'blanqueo',`Blanqueo de ${money(r.amount)} → ${money(clean)} limpio (comisión ${fee}%)`,5+Math.floor(r.amount/5000),id);save();render();
+}
+function delRobo(id){ask('¿Eliminar este robo y sus puntos?',()=>{db.robos=db.robos.filter(r=>r.id!==id);db.log=db.log.filter(l=>l.roboId!==id);save();render()})}
+function roboTable(list,admin){
+ if(!list.length)return'<p class="mut">No hay robos registrados.</p>';
+ return`<div class="tw"><table><tr><th>Fecha</th><th>Mafia</th><th>Miembro</th><th>Tipo</th><th>Descripción</th><th>Botín</th><th>Resultado</th><th>Blanqueo</th><th></th></tr>${[...list].sort((a,b)=>b.t-a.t).map(r=>`<tr><td>${fdate(r.t)}</td><td>${mbadge(r.mafiaId)}</td><td>${esc(uname(r.userId))}</td><td>${esc(r.tipo)}</td><td>${esc(r.desc)}</td><td>${money(r.amount)}</td><td class="${r.success?'ok':'bad'}">${r.success?'Éxito':'Fallido'}</td>
+ <td>${!r.success?'<span class="mut">No aplicable</span>':r.laundered?`<span class="ok">Limpio ${money(r.cleanAmount)}</span>`:(isAdmin()||r.userId===me.id)?`<button class="btn s ok" onclick="launder('${r.id}')">Blanquear</button>`:'<span class="mut">Pendiente</span>'}</td>
+ <td>${admin?`<button class="btn s d" onclick="delRobo('${r.id}')">Eliminar</button>`:''}</td></tr>`).join('')}</table></div>`;
+}
+function pRobos(){
+ const list=isAdmin()?db.robos:db.robos.filter(r=>r.mafiaId===me.mafiaId);
+ return`<div class="card"><h2>Registrar robo</h2><div class="row"><div><label for="rt">Tipo</label><select id="rt">${TIPOS.map(t=>`<option>${t}</option>`).join('')}</select></div>
+ <div><label for="ra">Botín (€)</label><input id="ra" type="number" min="0" value="0"></div><div><label for="rr">Resultado</label><select id="rr"><option value="1">Éxito</option><option value="0">Fallido</option></select></div></div>
+ <label for="rd">Descripción</label><input id="rd" maxlength="140" placeholder="Ej: Gasolinera de Vallecas, 3 miembros"><br><br><button class="btn" onclick="addRobo()">Registrar robo</button>
+ <p class="hint">Solo los robos exitosos pueden blanquearse (comisión actual: ${Number(db.settings.fee)||0}%).</p></div>
+ <div class="card"><h2>Robos ${isAdmin()?'(todas las mafias)':'de tu mafia'}</h2>${roboTable(list,isAdmin())}</div>`;
+}
+function pBlanqueo(){
+ const mine=db.robos.filter(r=>r.success&&(isAdmin()||r.mafiaId===me.mafiaId));
+ const pend=mine.filter(r=>!r.laundered),done=mine.filter(r=>r.laundered);
+ return`<div class="card"><h2>💸 Blanqueo de dinero</h2><p class="mut">Pendiente: ${money(pend.reduce((a,r)=>a+r.amount,0))} · Blanqueado limpio: ${money(done.reduce((a,r)=>a+r.cleanAmount,0))} · Comisión ${Number(db.settings.fee)||0}%</p></div>
+ <div class="card"><h3>Pendientes</h3>${roboTable(pend,false)}</div><div class="card"><h3>Blanqueados</h3>${roboTable(done,false)}</div>`;
+}
+function compress(file,cb){
+ const fr=new FileReader();fr.onload=()=>{const im=new Image();im.onload=()=>{const M=640,k=Math.min(1,M/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext('2d').drawImage(im,0,0,c.width,c.height);let d=c.toDataURL('image/jpeg',.6);if(d.length>180000)d=c.toDataURL('image/jpeg',.4);cb(d)};im.onerror=()=>toast('Imagen no válida');im.src=fr.result};fr.readAsDataURL(file);
+}
+function pickImg(e){const f=e.target.files[0];if(!f)return;compress(f,d=>{if(d.length>400000){toast('Imagen demasiado grande, prueba con otra.');return}pendingImg=d;$('#prev').innerHTML=`<img src="${d}" style="max-width:200px;border-radius:8px;margin-top:.5rem" alt="vista previa">`})}
+function addPost(){
+ if(!me.mafiaId&&!isAdmin())return toast('Necesitas una mafia.');
+ let img=pendingImg;const url=$('#pu').value.trim();
+ if(!img&&/^https?:\/\//i.test(url))img=url;
+ if(!img)return toast('Sube una foto o pega una URL de imagen.');
+ db.posts.push({id:uid(),userId:me.id,mafiaId:me.mafiaId,img,msg:$('#pm').value.trim().slice(0,140),t:Date.now()});
+ pendingImg='';save();render();
+}
+function delPost(id){ask('¿Eliminar publicación?',()=>{db.posts=db.posts.filter(p=>p.id!==id);save();render()})}
+function postsGrid(){
+ if(!db.posts.length)return'<p class="mut">Aún no hay publicaciones.</p>';
+ return`<div class="posts">${[...db.posts].sort((a,b)=>b.t-a.t).map(p=>`<div class="post"><img src="${esc(p.img)}" alt="foto" loading="lazy"><div>${mbadge(p.mafiaId)} <span class="mut">${esc(uname(p.userId))} · ${fdate(p.t)}</span>${p.msg?`<p>${esc(p.msg)}</p>`:''}${(isAdmin()||p.userId===me.id)?`<button class="btn s d" onclick="delPost('${p.id}')">Eliminar</button>`:''}</div></div>`).join('')}</div>`;
+}
+function pForo(){
+ return`<div class="card"><h2>🕶️ Foro de secuestros</h2><label for="pf">Foto (captura del juego)</label><input id="pf" type="file" accept="image/*" onchange="pickImg(event)"><div id="prev"></div>
+ <label for="pu">…o URL de imagen</label><input id="pu" placeholder="https://..."><label for="pm">Mensaje (opcional)</label><input id="pm" maxlength="140" placeholder="Un mensaje para los secuestrados..."><br><br><button class="btn" onclick="addPost()">Publicar</button></div>
+ <div class="card">${postsGrid()}</div>`;
+}
+function pProgreso(){
+ const rows=db.mafias.map(m=>({m,s:stats(m.id)})).sort((a,b)=>b.s.pts-a.s.pts);
+ const bars=({m,s},i)=>{const rk=rankOf(s.pts),nx=RANKS.find(r=>r.p>s.pts),pct=nx?Math.min(100,(s.pts-rk.p)/(nx.p-rk.p)*100):100;
+  return`<tr><td>#${i+1}</td><td>${mbadge(m.id)}</td><td><b>${esc(rk.n)}</b></td><td style="min-width:150px"><div class="bar"><i style="width:${Math.max(0,pct)}%"></i></div><small class="mut">${s.pts} pts${nx?' / '+nx.p+' → '+esc(nx.n):' (máx.)'}</small></td><td class="ok">${s.ok}</td><td class="bad">${s.fail}</td><td>${money(s.laund)}</td></tr>`};
+ const lg=[...db.log].filter(l=>isAdmin()||l.mafiaId===me.mafiaId).sort((a,b)=>b.t-a.t).slice(0,40);
+ return`<div class="card"><h2>🏆 Ranking y progreso de mafias</h2><div class="tw"><table><tr><th>Pos</th><th>Mafia</th><th>Rango</th><th>Progreso</th><th>Éxitos</th><th>Fallos</th><th>Blanqueado</th></tr>${rows.map(bars).join('')}</table></div>
+ <p class="hint">Puntos: robo exitoso +10 · fallido −5 · blanqueo +5 (+1 cada 5.000 €) · ajustes manuales del admin.</p></div><div class="card"><h3>Historial de progreso</h3>${logTable(lg)}</div>`;
+}
+async function chgPass(){
+ const p=$('#np').value;if(p.length<6)return toast('Mínimo 6 caracteres.');
+ try{await api('passwd',{password:p});toast('Contraseña actualizada.');$('#np').value=''}catch(e){toast(e.msg)}
+}
+function pPerfil(){return`<div class="card" style="max-width:440px"><h2>Mi perfil</h2><p>Usuario: <b>${esc(me.username)}</b> · ${mbadge(me.mafiaId)} · ${isAdmin()?'Administrador':'Miembro'}</p><label for="np">Nueva contraseña</label><input id="np" type="password" autocomplete="new-password"><br><br><button class="btn" onclick="chgPass()">Cambiar contraseña</button></div>`}
+
+/* ---------- Administración ---------- */
+function saveAd(){
+ const u=$('#adu').value.trim();if(u&&!/^https:\/\//i.test(u))return toast('El enlace debe empezar por https://');
+ Object.assign(db.settings,{adUrl:u,adTitle:$('#adt').value.trim(),adText:$('#adx').value.trim()});save();toast('Anuncio guardado.');render();
+}
+function clearAd(){Object.assign(db.settings,{adUrl:'',adText:''});save();render()}
+function addMafia(){const n=$('#mn').value.trim();if(!n)return;db.mafias.push({id:uid(),name:n,color:$('#mc').value,ord:Date.now()});save();render()}
+function delMafia(id){ask('¿Eliminar mafia con sus robos, publicaciones y progreso? Sus miembros quedarán sin mafia.',()=>{
+ db.mafias=db.mafias.filter(m=>m.id!==id);db.robos=db.robos.filter(r=>r.mafiaId!==id);db.posts=db.posts.filter(p=>p.mafiaId!==id);db.log=db.log.filter(l=>l.mafiaId!==id);save();render()})}
+function adjPts(id){const v=parseInt($('#pj'+id).value);if(!v)return;addLog(id,me.id,'ajuste',`Ajuste manual del admin (${v>0?'+':''}${v})`,v);save();render()}
+async function userAct(a,body,msg){try{await api(a,body);if(msg)toast(msg);await refresh(true)}catch(e){toast(e.msg);refresh(true)}}
+function setUserMafia(id,v){userAct('user_update',{id,mafiaId:v},'Mafia actualizada.')}
+function toggleRole(id){const u=db.users.find(x=>x.id===id);userAct('user_update',{id,role:u.role==='admin'?'member':'admin'},'Rol actualizado.')}
+function delUser(id){ask('¿Eliminar este perfil? El usuario perderá el acceso a la web.',()=>userAct('user_delete',{id},'Usuario eliminado.'))}
+function resetPass(id){ask('Nueva contraseña para este usuario:',p=>{if(!p||p.length<6)return toast('Mínimo 6 caracteres.');userAct('user_setpass',{id,password:p},'Contraseña cambiada.')},true)}
+function filterUsers(v){v=v.toLowerCase();document.querySelectorAll('#utb tr[data-n]').forEach(r=>{r.style.display=r.dataset.n.includes(v)?'':'none'})}
+function saveCfg(){db.settings.fee=Math.min(100,Math.max(0,Number($('#fee').value)||0));save();toast('Ajustes guardados.')}
+function expJSON(){dl('madrid_mafias_datos.json',JSON.stringify(db,null,1),'application/json')}
+function expCSV(){
+ const q=v=>'"'+String(v??'').replace(/"/g,'""')+'"';
+ let c='Fecha,Mafia,Miembro,Evento,Descripcion,Puntos\n';
+ [...db.log].sort((a,b)=>a.t-b.t).forEach(l=>{const m=mafia(l.mafiaId);c+=[fdate(l.t),m?m.name:'',l.userId?uname(l.userId):'',l.type,l.desc,l.pts].map(q).join(',')+'\n'});
+ c+='\nRESUMEN\nMafia,Rango,Puntos,Exitos,Fallos,Blanqueado\n';
+ db.mafias.forEach(m=>{const s=stats(m.id);c+=[m.name,rankOf(s.pts).n,s.pts,s.ok,s.fail,s.laund].map(q).join(',')+'\n'});
+ dl('progreso_mafias.csv','﻿'+c,'text/csv');
+}
+function pUsuarios(){
+ const on=db.users.filter(u=>Date.now()-(u.lastSeen||0)<300000).length;
+ const per=db.mafias.map(m=>`<div class="stat"><small>${esc(m.name)}</small><b>${db.users.filter(u=>u.mafiaId===m.id).length}</b></div>`).join('');
+ return`<div class="sum"><div class="stat"><small>Miembros registrados</small><b>${db.users.length}</b></div><div class="stat"><small>Conectados (5 min)</small><b class="ok">${on}</b></div>${per}<div class="stat"><small>Sin mafia</small><b>${db.users.filter(u=>!mafia(u.mafiaId)).length}</b></div></div>
+ <div class="card"><div class="fx" style="justify-content:space-between;margin-bottom:.6rem"><h2 style="margin:0">Miembros registrados</h2><input id="usq" placeholder="Buscar usuario…" aria-label="Buscar usuario" oninput="filterUsers(this.value)" style="max-width:220px"></div>
+ <div class="tw"><table><thead><tr><th>Usuario</th><th>Rol</th><th>Mafia</th><th>Alta</th><th>Última conexión</th><th>Acciones</th></tr></thead><tbody id="utb">${[...db.users].sort((a,b)=>(b.lastSeen||0)-(a.lastSeen||0)).map(u=>{const o=Date.now()-(u.lastSeen||0)<300000;return`<tr data-n="${esc(u.username.toLowerCase())}"><td><span class="dot ${o?'':'off'}"></span>${esc(u.username)}${u.id===me.id?' <span class="mut">(tú)</span>':''}</td><td>${u.role==='admin'?'Admin':'Miembro'}</td><td><select aria-label="Mafia de ${esc(u.username)}" onchange="setUserMafia('${u.id}',this.value)"><option value="">Sin mafia</option>${db.mafias.map(m=>`<option value="${esc(m.id)}" ${u.mafiaId===m.id?'selected':''}>${esc(m.name)}</option>`).join('')}</select></td><td>${fdate(u.created)}</td><td>${ago(u.lastSeen)}</td><td><div class="fx">${u.id===me.id?'':`<button class="btn s g" onclick="toggleRole('${u.id}')">${u.role==='admin'?'Quitar admin':'Hacer admin'}</button>`}<button class="btn s g" onclick="resetPass('${u.id}')">Contraseña</button>${u.id===me.id?'':`<button class="btn s d" onclick="delUser('${u.id}')">Eliminar</button>`}</div></td></tr>`}).join('')}</tbody></table></div>
+ <p class="hint">Pulsa «↻ Actualizar» arriba para ver los registros nuevos.</p></div>`;
+}
+function pAdmin(){
+ const T=[['anuncio','Anuncio'],['mafias','Mafias'],['robos','Robos'],['usuarios','Usuarios'],['foro','Foro'],['datos','Datos / Ajustes']];
+ let h=`<div class="tabs">${T.map(t=>`<button class="${atab===t[0]?'on':''}" onclick="atab='${t[0]}';render()">${t[1]}</button>`).join('')}</div>`;
+ const s=db.settings;
+ if(atab==='anuncio')h+=`<div class="card"><h2>Anuncio de la web</h2><label for="adt">Título</label><input id="adt" value="${esc(s.adTitle)}"><label for="adx">Texto (opcional)</label><textarea id="adx">${esc(s.adText)}</textarea>
+ <label for="adu">Enlace de Google (Google Sites publicado, Docs, Slides, Forms…)</label><input id="adu" placeholder="https://sites.google.com/..." value="${esc(s.adUrl)}"><br><div class="fx"><button class="btn" onclick="saveAd()">Guardar anuncio</button><button class="btn g" onclick="clearAd()">Quitar anuncio</button></div>
+ <p class="hint">Se muestra en Inicio. Si el enlace no carga dentro de la web, usa el enlace para abrirlo en una pestaña nueva.</p></div>${adCard()}`;
+ if(atab==='mafias')h+=`<div class="card"><h2>Mafias</h2><div class="tw"><table><tr><th>Mafia</th><th>Miembros</th><th>Puntos</th><th>Ajustar puntos</th><th></th></tr>${db.mafias.map(m=>`<tr><td>${mbadge(m.id)}</td><td>${db.users.filter(u=>u.mafiaId===m.id).length}</td><td>${mpts(m.id)} · ${esc(rankOf(mpts(m.id)).n)}</td><td><div class="fx"><input id="pj${esc(m.id)}" type="number" placeholder="+/-" style="width:90px"><button class="btn s g" onclick="adjPts('${m.id}')">Aplicar</button></div></td><td><button class="btn s d" onclick="delMafia('${m.id}')">Eliminar</button></td></tr>`).join('')}</table></div></div>
+ <div class="card"><h3>Añadir mafia</h3><div class="row"><div><label for="mn">Nombre</label><input id="mn"></div><div><label for="mc">Color</label><input id="mc" type="color" value="#e11d48" style="height:40px;padding:2px"></div><div><button class="btn" onclick="addMafia()">Añadir</button></div></div></div>`;
+ if(atab==='robos')h+=`<div class="card"><h2>Todos los robos</h2>${roboTable(db.robos,true)}</div>`;
+ if(atab==='usuarios')h+=pUsuarios();
+ if(atab==='foro')h+=`<div class="card"><h2>Moderación del foro</h2>${postsGrid()}</div>`;
+ if(atab==='datos')h+=`<div class="card"><h2>Ajustes</h2><div class="row"><div><label for="fee">Comisión de blanqueo (%)</label><input id="fee" type="number" min="0" max="100" value="${Number(s.fee)||0}"></div></div><br><button class="btn" onclick="saveCfg()">Guardar ajustes</button></div>
+ <div class="card"><h2>Exportar progreso</h2><div class="fx"><button class="btn" onclick="expCSV()">Descargar progreso (CSV)</button><button class="btn g" onclick="expJSON()">Copia completa (JSON)</button></div>
+ <p class="hint">Los datos están en la base de datos de Wasmer y los ven todos los miembros. Usa el CSV o el JSON para llevar el progreso de las mafias a un sitio externo.</p></div>`;
+ return h;
+}
+function render(){
+ if(!loaded){$('#app').innerHTML='<div class="auth"><div class="card"><p class="mut">Cargando…</p></div></div>';return}
+ if(bootErr){$('#app').innerHTML=`<div class="auth"><div class="card"><h2>No se pudo cargar la web</h2><p class="bad">${esc(bootErr)}</p><button class="btn" onclick="location.reload()">Reintentar</button></div></div>`;return}
+ if(!me)return renderAuth();
+ const P=[['inicio','Inicio'],['robos','Robos'],['blanqueo','Blanqueo'],['foro','Foro'],['progreso','Progreso'],['perfil','Perfil']];
+ if(isAdmin())P.push(['admin','⚙️ Admin']);
+ const f={inicio:pInicio,robos:pRobos,blanqueo:pBlanqueo,foro:pForo,progreso:pProgreso,perfil:pPerfil,admin:pAdmin};
+ if(page==='admin'&&!isAdmin())page='inicio';
+ $('#app').innerHTML=`<header><div class="logo">MADRID <b>UNDERGROUND</b></div><nav>${P.map(p=>`<button class="${page===p[0]?'on':''}" onclick="go('${p[0]}')">${p[1]}</button>`).join('')}</nav>
+ <div class="user"><button class="btn s g" onclick="refresh()">↻ Actualizar</button>${esc(me.username)} ${mbadge(me.mafiaId)}<button class="btn s g" onclick="logout()">Salir</button></div></header><main>${f[page]()}</main>`;
+}
+render();refresh();
+</script>
+</body>
+</html>
